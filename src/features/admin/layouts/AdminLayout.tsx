@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { NavLink, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard,
   Utensils,
@@ -8,8 +9,12 @@ import {
   ExternalLink,
   LogOut,
   ShieldCheck,
+  UtensilsCrossed,
 } from 'lucide-react';
 import { useAuth } from '../../auth/hooks/useAuth';
+import { useRestaurantSettings } from '../../settings/hooks/useRestaurantSettings';
+import { getLocalizedText } from '../../../lib/utils/format';
+import type { Language } from '../../../types';
 
 const NAV_ITEMS = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
@@ -20,6 +25,18 @@ const NAV_ITEMS = [
 
 export function AdminLayout({ children }: { children: ReactNode }) {
   const { user, role, restaurantId, logout } = useAuth();
+  const { profile, status: settingsStatus } = useRestaurantSettings(restaurantId);
+  const { i18n } = useTranslation();
+  const lang = (i18n.language?.slice(0, 2) as Language) || 'hy';
+
+  const restaurantName =
+    settingsStatus === 'ready' && profile
+      ? getLocalizedText(profile.name, lang)
+      : '';
+  const logoUrl =
+    settingsStatus === 'ready' && profile
+      ? profile.branding?.logoUrl?.trim() || ''
+      : '';
 
   return (
     <div className="flex min-h-dvh flex-col bg-stone-100/70 text-stone-900 lg:flex-row">
@@ -28,10 +45,22 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         <div>
           <div className="flex items-center justify-between border-b border-stone-100 px-5 py-4">
             <Link to="/admin" className="flex items-center gap-2.5">
-              <img src="/logo.svg" alt="Xutorok" className="h-8 w-auto" />
+              {settingsStatus === 'loading' ? (
+                <div className="h-8 w-8 shrink-0 animate-pulse rounded-lg bg-stone-200/80" />
+              ) : logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt={restaurantName || 'Admin Console'}
+                  className="h-8 w-auto max-w-[100px] object-contain"
+                />
+              ) : (
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-stone-100 text-stone-600">
+                  <UtensilsCrossed className="h-4 w-4" />
+                </div>
+              )}
               <div>
                 <span className="block text-sm font-bold text-stone-900">
-                  Admin Console
+                  {restaurantName || 'Admin Console'}
                 </span>
                 <span className="block font-mono text-[11px] text-stone-500">
                   tenant: {restaurantId}
@@ -111,4 +140,3 @@ export function AdminLayout({ children }: { children: ReactNode }) {
     </div>
   );
 }
-

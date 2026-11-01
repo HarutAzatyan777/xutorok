@@ -2,31 +2,41 @@ import { useCallback, useEffect, useState } from 'react';
 import { getRestaurantId } from '../../../config/app';
 import { subscribeToPublicCategories } from '../../categories/services/categoryService';
 import { subscribeToPublicProducts } from '../../products/services/productService';
-import {
-  fetchRestaurantProfile,
-  getDefaultRestaurantProfile,
-} from '../../settings/services/settingsService';
-import type { MenuCategory, MenuProduct, RestaurantProfile } from '../../../types';
+import { useRestaurantSettings } from '../../settings/hooks/useRestaurantSettings';
+import type {
+  MenuCategory,
+  MenuProduct,
+  RestaurantProfile,
+  SettingsLoadStatus,
+} from '../../../types';
 
 export interface PublicMenuState {
-  profile: RestaurantProfile;
+  profile: RestaurantProfile | null;
+  settingsStatus: SettingsLoadStatus;
+  settingsError: string | null;
   categories: MenuCategory[];
   products: MenuProduct[];
   loading: boolean;
   error: string | null;
   retry: () => void;
+  retrySettings: () => void;
 }
 
 /**
- * Connects live real-time Firestore queries (`restaurants/{restaurantId}/categories`
- * and `restaurants/{restaurantId}/products`) as the single authoritative source of truth.
- * Never falls back to static JSON or hardcoded product arrays.
+ * Connects live real-time Firestore queries (`restaurants/{restaurantId}/settings`,
+ * `restaurants/{restaurantId}/categories`, and `restaurants/{restaurantId}/products`)
+ * as the single authoritative source of truth.
+ * Never initializes with hardcoded branding or static product arrays.
  */
-export function usePublicMenu(): PublicMenuState {
-  const restaurantId = getRestaurantId();
-  const [profile, setProfile] = useState<RestaurantProfile>(() =>
-    getDefaultRestaurantProfile(restaurantId)
-  );
+export function usePublicMenu(overrideRestaurantId?: string): PublicMenuState {
+  const restaurantId = getRestaurantId(overrideRestaurantId);
+  const {
+    profile,
+    status: settingsStatus,
+    error: settingsError,
+    retry: retrySettings,
+  } = useRestaurantSettings(restaurantId);
+
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [products, setProducts] = useState<MenuProduct[]>([]);
   const [catLoaded, setCatLoaded] = useState(false);
@@ -39,18 +49,13 @@ export function usePublicMenu(): PublicMenuState {
     setProdLoaded(false);
     setError(null);
     setRetryTick((prev) => prev + 1);
-  }, []);
+    if (settingsStatus === 'error') {
+      retrySettings();
+    }
+  }, [retrySettings, settingsStatus]);
 
   useEffect(() => {
     let active = true;
-
-    fetchRestaurantProfile(restaurantId)
-      .then((res) => {
-        if (active) setProfile(res);
-      })
-      .catch(() => {
-        // Keep default profile header if restaurant root doc is not yet created
-      });
 
     const unsubCategories = subscribeToPublicCategories(
       (cats) => {
@@ -93,10 +98,13 @@ export function usePublicMenu(): PublicMenuState {
 
   return {
     profile,
+    settingsStatus,
+    settingsError,
     categories,
     products,
     loading,
     error,
     retry,
+    retrySettings,
   };
 }

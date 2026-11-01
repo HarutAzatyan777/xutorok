@@ -3,8 +3,18 @@ import { Navigate, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Lock, ArrowLeft, AlertCircle, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import {
+  Lock,
+  ArrowLeft,
+  AlertCircle,
+  Loader2,
+  UtensilsCrossed,
+} from 'lucide-react';
 import { useAuth } from '../../features/auth/hooks/useAuth';
+import { useRestaurantSettings } from '../../features/settings/hooks/useRestaurantSettings';
+import { getLocalizedText } from '../../lib/utils/format';
+import type { Language } from '../../types';
 
 const loginSchema = z.object({
   email: z.string().trim().email('Please enter a valid email address'),
@@ -15,9 +25,22 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function AdminLoginPage() {
   const { user, isAuthorizedAdmin, loading, restaurantId, login } = useAuth();
+  const { profile, status: settingsStatus } = useRestaurantSettings(restaurantId);
+  const { i18n } = useTranslation();
+  const lang = (i18n.language?.slice(0, 2) as Language) || 'hy';
+
   const [authError, setAuthError] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const restaurantName =
+    settingsStatus === 'ready' && profile
+      ? getLocalizedText(profile.name, lang)
+      : '';
+  const logoUrl =
+    settingsStatus === 'ready' && profile
+      ? profile.branding?.logoUrl?.trim() || ''
+      : '';
 
   const {
     register,
@@ -84,9 +107,23 @@ export function AdminLoginPage() {
 
         <div className="rounded-3xl border border-stone-200 bg-white p-8 shadow-sm">
           <div className="flex flex-col items-center text-center">
-            <img src="/logo.svg" alt="Xutorok" className="h-12 w-auto" />
+            {settingsStatus === 'loading' ? (
+              <div className="h-12 w-12 animate-pulse rounded-2xl bg-stone-200/80" />
+            ) : logoUrl ? (
+              <img
+                src={logoUrl}
+                alt={restaurantName || 'Restaurant Admin'}
+                className="h-12 w-auto max-w-[160px] object-contain"
+              />
+            ) : (
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-stone-100 text-stone-600">
+                <UtensilsCrossed className="h-6 w-6" />
+              </div>
+            )}
             <h1 className="mt-4 text-xl font-bold text-stone-900">
-              Restaurant Admin Sign In
+              {restaurantName
+                ? `${restaurantName} — Admin Sign In`
+                : 'Restaurant Admin Sign In'}
             </h1>
             <p className="mt-1 text-xs text-stone-500">
               Authorized restaurant administrators only
@@ -168,4 +205,3 @@ export function AdminLoginPage() {
     </div>
   );
 }
-

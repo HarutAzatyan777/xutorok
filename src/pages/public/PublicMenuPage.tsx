@@ -16,11 +16,14 @@ export function PublicMenuPage() {
 
   const {
     profile,
+    settingsStatus,
+    settingsError,
     categories,
     products,
     loading,
     error,
     retry,
+    retrySettings,
   } = usePublicMenu();
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
@@ -32,11 +35,20 @@ export function PublicMenuPage() {
     [categories]
   );
 
-  // Only show products belonging to visible categories (or all visible products if categories haven't loaded)
+  const showUnavailable = profile?.menuSettings?.showUnavailableItems !== false;
+
+  // Only show products belonging to visible categories (and respect showUnavailableItems setting)
   const activeProducts = useMemo(() => {
-    if (categories.length === 0) return products;
-    return products.filter((p) => visibleCategoryIds.has(p.categoryId));
-  }, [categories.length, products, visibleCategoryIds]);
+    return products.filter((p) => {
+      if (categories.length > 0 && !visibleCategoryIds.has(p.categoryId)) {
+        return false;
+      }
+      if (!showUnavailable && !p.isAvailable) {
+        return false;
+      }
+      return true;
+    });
+  }, [categories.length, products, showUnavailable, visibleCategoryIds]);
 
   const categoriesById = useMemo(() => {
     const map: Record<string, string> = {};
@@ -87,17 +99,56 @@ export function PublicMenuPage() {
       .filter((group) => group.items.length > 0);
   }, [categories, filteredProducts, selectedCategoryId, searchQuery]);
 
+  const restaurantName =
+    settingsStatus === 'ready' && profile
+      ? getLocalizedText(profile.name, lang)
+      : '';
+
   return (
-    <PublicLayout profile={profile}>
-      {/* Hero / Search Bar Section */}
+    <PublicLayout
+      profile={profile}
+      settingsStatus={settingsStatus}
+      onRetrySettings={retrySettings}
+    >
+      {/* Hero / Search Bar Section — stable dimensions during loading */}
       <section className="border-b border-stone-200/60 bg-white pt-6 pb-5">
         <div className="mx-auto max-w-6xl px-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">
-                {getLocalizedText(profile.name, lang, 'Xutorok')}
-              </h1>
-              <p className="mt-1 text-sm text-stone-500">{t('menu.subtitle')}</p>
+            <div className="min-h-[3.5rem] flex flex-col justify-center">
+              {settingsStatus === 'loading' ? (
+                <div
+                  data-testid="hero-branding-skeleton"
+                  aria-busy="true"
+                  className="space-y-2"
+                >
+                  <div className="h-8 w-44 animate-pulse rounded-lg bg-stone-200/80 sm:h-9 sm:w-56" />
+                  <div className="h-4 w-60 animate-pulse rounded bg-stone-200/60" />
+                </div>
+              ) : settingsStatus === 'error' ? (
+                <div
+                  data-testid="settings-error-banner"
+                  role="alert"
+                  className="flex flex-wrap items-center gap-3 rounded-xl border border-amber-200 bg-amber-50/80 px-3.5 py-2 text-xs text-amber-950"
+                >
+                  <AlertCircle className="h-4 w-4 shrink-0 text-amber-700" />
+                  <span>{settingsError || t('menu.errorDescription')}</span>
+                  <button
+                    type="button"
+                    onClick={retrySettings}
+                    className="inline-flex items-center gap-1 rounded-lg bg-amber-900 px-2.5 py-1 text-xs font-semibold text-white hover:bg-amber-950"
+                  >
+                    <RefreshCw className="h-3 w-3" />
+                    <span>{t('menu.retry')}</span>
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <h1 className="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">
+                    {restaurantName || t('menu.title')}
+                  </h1>
+                  <p className="mt-1 text-sm text-stone-500">{t('menu.subtitle')}</p>
+                </div>
+              )}
             </div>
 
             {/* Search Input */}

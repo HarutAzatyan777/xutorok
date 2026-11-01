@@ -12,6 +12,8 @@ export type MembershipStatus = 'active' | 'disabled';
 
 export type RestaurantStatus = 'active' | 'inactive' | 'draft' | 'suspended';
 
+export type SettingsLoadStatus = 'loading' | 'ready' | 'error';
+
 export interface ProductVariant {
   id: string;
   label: Partial<LocalizedText>;
@@ -88,6 +90,11 @@ export interface RestaurantBranding {
   accentColor?: string;
 }
 
+export interface RestaurantMenuDisplaySettings {
+  showUnavailableItems: boolean;
+  showFeaturedSection: boolean;
+}
+
 export interface RestaurantProfile {
   id: string;
   restaurantId: string;
@@ -99,6 +106,7 @@ export interface RestaurantProfile {
   currency: CurrencyCode;
   branding?: RestaurantBranding;
   contact?: RestaurantContactInfo;
+  menuSettings?: RestaurantMenuDisplaySettings;
   createdAt?: Timestamp | Date | null;
   updatedAt?: Timestamp | Date | null;
 }

@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Save, Loader2 } from 'lucide-react';
+import { Save, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 import { AdminLayout } from '../../features/admin/layouts/AdminLayout';
 import { ImageUploader } from '../../components/common/ImageUploader';
 import { useAuth } from '../../features/auth/hooks/useAuth';
@@ -43,6 +43,8 @@ export function AdminSettingsPage() {
   const { restaurantId } = useAuth();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadTick, setReloadTick] = useState(0);
 
   const {
     register,
@@ -54,12 +56,12 @@ export function AdminSettingsPage() {
   } = useForm<SettingsFormValues>({
     resolver: zodResolver(settingsFormSchema),
     defaultValues: {
-      name: { hy: 'Խուտոռոկ', ru: 'Хуторок', en: 'Xutorok' },
+      name: { hy: '', ru: '', en: '' },
       defaultLanguage: 'hy',
       supportHy: true,
       supportRu: true,
       supportEn: true,
-      logoUrl: '/logo.svg',
+      logoUrl: '',
       logoPath: '',
       primaryColor: '#5c3a1e',
       secondaryColor: '#8c6239',
@@ -72,8 +74,15 @@ export function AdminSettingsPage() {
   const watchedLogoUrl = useWatch({ control, name: 'logoUrl' });
   const watchedLogoPath = useWatch({ control, name: 'logoPath' });
 
+  const handleRetryLoad = useCallback(() => {
+    setLoading(true);
+    setLoadError(null);
+    setReloadTick((prev) => prev + 1);
+  }, []);
+
   useEffect(() => {
     let active = true;
+
     fetchRestaurantProfile(restaurantId)
       .then((profile) => {
         if (!active) return;
@@ -84,7 +93,7 @@ export function AdminSettingsPage() {
           supportHy: langs.has('hy'),
           supportRu: langs.has('ru'),
           supportEn: langs.has('en'),
-          logoUrl: profile.branding?.logoUrl ?? '/logo.svg',
+          logoUrl: profile.branding?.logoUrl ?? '',
           logoPath: profile.branding?.logoPath ?? '',
           primaryColor: profile.branding?.primaryColor ?? '#5c3a1e',
           secondaryColor: profile.branding?.secondaryColor ?? '#8c6239',
@@ -101,13 +110,22 @@ export function AdminSettingsPage() {
           },
         });
       })
+      .catch((err) => {
+        if (!active) return;
+        setLoadError(
+          err instanceof Error
+            ? err.message
+            : 'Unable to load restaurant settings from Firestore.'
+        );
+      })
       .finally(() => {
         if (active) setLoading(false);
       });
+
     return () => {
       active = false;
     };
-  }, [reset, restaurantId]);
+  }, [reloadTick, reset, restaurantId]);
 
   const onSubmit = async (values: SettingsFormValues) => {
     const supportedLanguages: Language[] = [];
@@ -125,8 +143,8 @@ export function AdminSettingsPage() {
           defaultLanguage: values.defaultLanguage,
           supportedLanguages,
           branding: {
-            logoUrl: values.logoUrl || '/logo.svg',
-            logoPath: values.logoPath || '',
+            logoUrl: values.logoUrl?.trim() || '',
+            logoPath: values.logoPath?.trim() || '',
             primaryColor: values.primaryColor,
             secondaryColor: values.secondaryColor,
           },
@@ -141,7 +159,7 @@ export function AdminSettingsPage() {
       showToast({
         variant: 'success',
         title: 'Settings saved',
-        description: `Updated settings for restaurants/${restaurantId}.`,
+        description: `Updated settings for restaurants/${restaurantId}/settings.`,
       });
     } catch (err) {
       showToast({
@@ -158,6 +176,31 @@ export function AdminSettingsPage() {
         <div className="flex items-center justify-center py-20 text-sm text-stone-500">
           <Loader2 className="mr-2 h-5 w-5 animate-spin" />
           Loading restaurant settings...
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <AdminLayout>
+        <div
+          role="alert"
+          className="mx-auto max-w-lg rounded-2xl border border-red-200 bg-white p-8 text-center"
+        >
+          <AlertCircle className="mx-auto h-8 w-8 text-red-600" />
+          <h2 className="mt-3 text-lg font-bold text-stone-900">
+            Could not load restaurant settings
+          </h2>
+          <p className="mt-1.5 text-xs text-stone-600">{loadError}</p>
+          <button
+            type="button"
+            onClick={handleRetryLoad}
+            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-950"
+          >
+            <RefreshCw className="h-4 w-4" />
+            <span>Retry</span>
+          </button>
         </div>
       </AdminLayout>
     );
@@ -415,4 +458,3 @@ export function AdminSettingsPage() {
     </AdminLayout>
   );
 }
-
