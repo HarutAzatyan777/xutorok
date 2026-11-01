@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -42,10 +43,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     membership: null,
     restaurantId,
   });
+  const inFlightCheckRef = useRef<{
+    uid: string;
+    promise: Promise<ResolvedAdminAccess>;
+  } | null>(null);
 
   const verifyUserAccess = useCallback(
-    async (firebaseUser: User | null): Promise<ResolvedAdminAccess> => {
+    async (firebaseUser: User | null, forceRefresh = false): Promise<ResolvedAdminAccess> => {
       if (!firebaseUser) {
+        inFlightCheckRef.current = null;
         const empty: ResolvedAdminAccess = {
           isAuthorized: false,
           role: null,
@@ -56,9 +62,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return empty;
       }
 
-      const resolved = await resolveRestaurantAdminAccess(firebaseUser, restaurantId);
-      setAccess(resolved);
-      return resolved;
+      if (
+        !forceRefresh &&
+        inFlightCheckRef.current &&
+        inFlightCheckRef.current.uid === firebaseUser.uid
+      ) {
+        return inFlightCheckRef.current.promise;
+      }
+
+      const promise = resolveRestaurantAdminAccess(firebaseUser, restaurantId).then(
+        (resolved) => {
+          setAccess(resolved);
+          return resolved;
+        }
+      );
+      inFlightCheckRef.current = { uid: firebaseUser.uid, promise };
+      return promise;
     },
     [restaurantId]
   );
@@ -90,6 +109,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const logout = useCallback(async () => {
+    inFlightCheckRef.current = null;
     await logoutAdmin();
     setUser(null);
     setAccess({
@@ -103,7 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refreshPermissions = useCallback(async () => {
     if (!auth.currentUser) return;
     setLoading(true);
-    await verifyUserAccess(auth.currentUser);
+    await verifyUserAccess(auth.currentUser, true);
     setLoading(false);
   }, [verifyUserAccess]);
 
@@ -126,4 +146,3 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     </AuthContext.Provider>
   );
 }
-

@@ -135,11 +135,21 @@ export async function createCategory(
 
   await setDoc(docRef, payload);
 
-  const createdSnap = await getDoc(docRef.withConverter(categoryConverter));
-  if (!createdSnap.exists()) {
-    throw new Error('Failed to verify created category document.');
-  }
-  return createdSnap.data();
+  return {
+    id: docRef.id,
+    restaurantId,
+    name: {
+      hy: values.name.hy.trim(),
+      ru: values.name.ru.trim(),
+      en: values.name.en.trim(),
+    },
+    ...(desc ? { description: desc } : {}),
+    slug,
+    sortOrder: Number(values.sortOrder) || 0,
+    isVisible: Boolean(values.isVisible),
+    ...(values.imageUrl?.trim() ? { imageUrl: values.imageUrl.trim() } : {}),
+    ...(values.imagePath?.trim() ? { imagePath: values.imagePath.trim() } : {}),
+  };
 }
 
 export async function updateCategory(

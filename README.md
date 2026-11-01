@@ -32,7 +32,7 @@ To onboard a new restaurant application in the future, set `VITE_RESTAURANT_ID=<
    ```
 
 2. **Environment configuration:**
-   Copy `.env.example` to `.env.local` (already configured for `xutorok` locally):
+   Copy `.env.example` to `.env.local` (configured for `xutorok` locally):
    ```bash
    VITE_RESTAURANT_ID=xutorok
    VITE_FIREBASE_API_KEY=...
@@ -59,20 +59,14 @@ To onboard a new restaurant application in the future, set `VITE_RESTAURANT_ID=<
 
 ---
 
-## 3. Multilingual Menu Data Import (`Xutorok`)
+## 3. Multilingual Menu Data Audit (`Xutorok`)
 
-The extracted trilingual Xutorok menu dataset (`29 categories`, `297 products`, including `39 multi-price variant items`) is stored in `data/Xutorok_menu_HY_RU_EN.json` and `data/Xutorok_menu_HY_RU_EN.csv`.
+The trilingual Xutorok menu dataset (`29 categories`, `297 products`, including `39 multi-price variant items`) is stored in `menu/Xutorok_menu_HY_RU_EN.json` and `menu/Xutorok_menu_HY_RU_EN.csv` and has been migrated to Cloud Firestore (`restaurants/xutorok`). All menu categories and products are managed live through the Admin Panel (`/admin`).
 
-- **Dry-run validation (no database writes):**
+- **Dry-run audit validation (no database writes):**
   ```bash
-  npm run import:menu
+  npm run menu:migrate:dry-run
   ```
-- **Live import to Firestore:**
-  - From the **Admin Dashboard** (`/admin`): Click **"Import Missing Items to Firestore"** after signing in as an authorized Xutorok administrator.
-  - Or via CLI with administrator credentials:
-    ```bash
-    ADMIN_EMAIL="owner@xutorok.am" ADMIN_PASSWORD="..." npm run import:menu:execute
-    ```
 
 ---
 
@@ -80,7 +74,7 @@ The extracted trilingual Xutorok menu dataset (`29 categories`, `297 products`, 
 
 Public visitors can browse `/` and `/menu` without signing in. Only authorized administrators can access `/admin/*`.
 
-To provision the first administrator for `xutorok`:
+To provision an administrator for `xutorok`:
 1. In **Firebase Console → Authentication**, enable the **Email/Password** provider and create an administrator user (copy their `uid`).
 2. In **Firebase Console → Firestore Database**, create the membership document at:
    `restaurants/xutorok/members/{uid}`
@@ -98,7 +92,7 @@ To provision the first administrator for `xutorok`:
 
 ## 5. Deploying Security Rules & Multi-Site Hosting Safely
 
-The `firestore.rules` file preserves existing rules on `ai-twin-conflicts` (`/arena_matches/{matchId}` and `/users/{userId}`) alongside the new `/restaurants/{restaurantId}` and `/platformAdmins/{uid}` rules.
+The `firestore.rules` file preserves existing rules on `ai-twin-conflicts` (`/arena_matches/{matchId}` and `/users/{userId}`) alongside the `/restaurants/{restaurantId}` and `/platformAdmins/{uid}` rules.
 
 1. **Deploy merged Firestore & Storage rules and indexes (after review):**
    ```bash

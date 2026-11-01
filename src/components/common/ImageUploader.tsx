@@ -1,10 +1,11 @@
 import { useRef, useState } from 'react';
 import { Upload, Trash2, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { getRestaurantId } from '../../config/app';
 import {
   uploadRestaurantImage,
   validateImageFile,
 } from '../../lib/firebase/storage';
-import type { StorageMediaFolder } from '../../lib/firebase/paths';
+import { tenantPaths, type StorageMediaFolder } from '../../lib/firebase/paths';
 import { useToast } from '../../app/providers/ToastProvider';
 
 interface ImageUploaderProps {
@@ -27,6 +28,7 @@ export function ImageUploader({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [uploading, setUploading] = useState(false);
   const { showToast } = useToast();
+  const restaurantId = getRestaurantId();
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -122,7 +124,7 @@ export function ImageUploader({
           <p className="text-xs text-stone-500">
             JPG, PNG, WebP, AVIF, or SVG up to 5 MB. Stored under{' '}
             <code className="rounded bg-stone-100 px-1 py-0.5 font-mono text-[11px]">
-              restaurants/xutorok/{folder}/
+              {tenantPaths.storageFolder(folder, restaurantId)}/
             </code>
             . Clean food photography without overlaid text/prices is recommended.
           </p>
@@ -131,4 +133,3 @@ export function ImageUploader({
     </div>
   );
 }
-

@@ -174,11 +174,39 @@ export async function createProduct(
   const payload = buildProductWritePayload(docRef.id, values, restaurantId, true);
 
   await setDoc(docRef, payload);
-  const created = await getDoc(docRef.withConverter(productConverter));
-  if (!created.exists()) {
-    throw new Error('Failed to verify created product.');
-  }
-  return created.data();
+
+  const desc = normalizeOptionalLocalizedText(values.description);
+  const variants = (values.variants ?? []).map((v, idx) => ({
+    id: v.id || `v-${idx + 1}`,
+    label: {
+      hy: v.label.hy?.trim() ?? '',
+      ru: v.label.ru?.trim() ?? '',
+      en: v.label.en?.trim() ?? '',
+    },
+    price: Number(v.price) || 0,
+    sortOrder: typeof v.sortOrder === 'number' ? v.sortOrder : idx,
+  }));
+
+  return {
+    id: docRef.id,
+    restaurantId,
+    categoryId: values.categoryId.trim(),
+    name: {
+      hy: values.name.hy.trim(),
+      ru: values.name.ru.trim(),
+      en: values.name.en.trim(),
+    },
+    ...(desc ? { description: desc } : {}),
+    price: Number(values.price) || 0,
+    currency: 'AMD',
+    ...(variants.length > 0 ? { variants } : {}),
+    ...(values.imageUrl?.trim() ? { imageUrl: values.imageUrl.trim() } : {}),
+    ...(values.imagePath?.trim() ? { imagePath: values.imagePath.trim() } : {}),
+    isAvailable: Boolean(values.isAvailable),
+    isVisible: Boolean(values.isVisible),
+    isFeatured: Boolean(values.isFeatured),
+    sortOrder: Number(values.sortOrder) || 0,
+  };
 }
 
 export async function updateProduct(
