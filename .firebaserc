@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "ai-twin-conflicts"
+  },
+  "targets": {
+    "ai-twin-conflicts": {
+      "hosting": {
+        "xutorok": [
+          "ai-twin-conflicts"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "menu": {
+    "title": "Թվային Մենյու",
+    "subtitle": "Ուկրաինական և հայկական ավանդական խոհանոց",
+    "allCategories": "Բոլորը",
+    "featured": "Հատուկ առաջարկներ",
+    "searchPlaceholder": "Որոնել ուտեստ կամ ըմպելիք...",
+    "clearSearch": "Մաքրել որոնումը",
+    "available": "Առկա է",
+    "unavailable": "Ժամանակավորապես անհասանելի է",
+    "variantsTitle": "Չափաբաժին / Տարբերակներ",
+    "standardPortion": "Ստանդարտ",
+    "portionOption": "Տարբերակ {{index}}",
+    "priceLabel": "Գին",
+    "descriptionLabel": "Նկարագրություն",
+    "namesInLanguages": "Անվանումը 3 լեզվով",
+    "closeDetails": "Փակել",
+    "emptyTitle": "Ուտեստներ չեն գտնվել",
+    "emptyDescription": "Փորձեք փոխել որոնման բառը կամ ընտրել այլ բաժին։",
+    "menuEmptyTitle": "Մենյուն շուտով հասանելի կլինի",
+    "menuEmptyDescription": "Մենյուի տվյալները ներկայումս թարմացվում են։",
+    "errorTitle": "Չհաջողվեց բեռնել մենյուն",
+    "errorDescription": "Խնդրում ենք ստուգել ինտերնետ կապը և փորձել կրկին։",
+    "retry": "Կրկին փորձել",
+    "itemsCount": "{{count}} անվանում",
+    "viewDetails": "Մանրամասն",
+    "noImage": "Լուսանկարը շուտով"
+  },
+  "footer": {
+    "rights": "Բոլոր իրավունքները պաշտպանված են",
+    "adminLink": "Ադմին պանել",
+    "address": "Հասցե",
+    "phone": "Հեռախոս",
+    "hours": "Աշխատանքային ժամեր"
+  },
+  "languages": {
+    "hy": "HY",
+    "ru": "RU",
+    "en": "EN",
+    "hyFull": "Հայերեն",
+    "ruFull": "Русский",
+    "enFull": "English"
+  }
+}
+

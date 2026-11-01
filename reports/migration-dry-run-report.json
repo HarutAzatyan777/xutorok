@@ -1,0 +1,39 @@
+{
+  "timestamp": "2026-11-01T09:47:58.145Z",
+  "mode": "dry-run",
+  "projectId": "ai-twin-conflicts",
+  "tenantId": "xutorok",
+  "sourceFiles": {
+    "jsonPath": "menu\\Xutorok_menu_HY_RU_EN.json",
+    "csvPath": "menu\\Xutorok_menu_HY_RU_EN.csv",
+    "xlsxPath": "menu\\Xutorok_menu_HY_RU_EN.xlsx",
+    "csvRowCount": 297,
+    "localImagesFound": []
+  },
+  "metrics": {
+    "sourceProducts": 297,
+    "uniqueValidProducts": 297,
+    "sourceCategories": 29,
+    "existingFirestoreProducts": 0,
+    "existingFirestoreCategories": 0,
+    "plannedCategoryInserts": 29,
+    "plannedProductInserts": 297,
+    "existingCategoriesUnchanged": 0,
+    "existingProductsUnchanged": 0,
+    "potentialCategoryUpdates": 0,
+    "potentialProductUpdates": 0,
+    "duplicateRecordsSkipped": 0,
+    "invalidRecordsCount": 0,
+    "missingCategoryRelationships": 0,
+    "missingProductImages": 297,
+    "matchedProductImages": 0,
+    "translationGapsCount": 0,
+    "tenantConflictsCount": 0,
+    "schemaConflictsCount": 0,
+    "expectedFinalFirestoreCategories": 29,
+    "expectedFinalFirestoreProducts": 297
+  },
+  "duplicates": [],
+  "validationIssues": [],
+  "conflicts": []
+}

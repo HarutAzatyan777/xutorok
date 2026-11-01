@@ -1,0 +1,45 @@
+{
+  "menu": {
+    "title": "Digital Menu",
+    "subtitle": "Traditional Ukrainian & Armenian Cuisine",
+    "allCategories": "All Items",
+    "featured": "Featured",
+    "searchPlaceholder": "Search dishes or drinks...",
+    "clearSearch": "Clear search",
+    "available": "Available",
+    "unavailable": "Currently unavailable",
+    "variantsTitle": "Portions / Variants",
+    "standardPortion": "Standard",
+    "portionOption": "Option {{index}}",
+    "priceLabel": "Price",
+    "descriptionLabel": "Description",
+    "namesInLanguages": "Name in 3 languages",
+    "closeDetails": "Close",
+    "emptyTitle": "No matching items found",
+    "emptyDescription": "Try adjusting your search query or selecting another category.",
+    "menuEmptyTitle": "Menu coming soon",
+    "menuEmptyDescription": "Our digital menu items are currently being updated.",
+    "errorTitle": "Unable to load menu",
+    "errorDescription": "Please check your connection and try again.",
+    "retry": "Retry",
+    "itemsCount": "{{count}} items",
+    "viewDetails": "View details",
+    "noImage": "Photo pending"
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "adminLink": "Admin Panel",
+    "address": "Address",
+    "phone": "Phone",
+    "hours": "Working Hours"
+  },
+  "languages": {
+    "hy": "HY",
+    "ru": "RU",
+    "en": "EN",
+    "hyFull": "Հայերեն",
+    "ruFull": "Русский",
+    "enFull": "English"
+  }
+}
+

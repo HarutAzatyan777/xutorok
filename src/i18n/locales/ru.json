@@ -1,0 +1,45 @@
+{
+  "menu": {
+    "title": "Цифровое Меню",
+    "subtitle": "Традиционная украинская и армянская кухня",
+    "allCategories": "Все блюда",
+    "featured": "Рекомендуем",
+    "searchPlaceholder": "Поиск блюд и напитков...",
+    "clearSearch": "Очистить поиск",
+    "available": "В наличии",
+    "unavailable": "Временно недоступно",
+    "variantsTitle": "Порции / Варианты",
+    "standardPortion": "Стандарт",
+    "portionOption": "Вариант {{index}}",
+    "priceLabel": "Цена",
+    "descriptionLabel": "Описание",
+    "namesInLanguages": "Название на 3 языках",
+    "closeDetails": "Закрыть",
+    "emptyTitle": "Ничего не найдено",
+    "emptyDescription": "Попробуйте изменить поисковый запрос или выбрать другую категорию.",
+    "menuEmptyTitle": "Меню обновляется",
+    "menuEmptyDescription": "Позиции меню скоро появятся.",
+    "errorTitle": "Не удалось загрузить меню",
+    "errorDescription": "Пожалуйста, проверьте подключение к интернету и попробуйте снова.",
+    "retry": "Повторить",
+    "itemsCount": "{{count}} поз.",
+    "viewDetails": "Подробнее",
+    "noImage": "Фото скоро"
+  },
+  "footer": {
+    "rights": "Все права защищены",
+    "adminLink": "Панель управления",
+    "address": "Адрес",
+    "phone": "Телефон",
+    "hours": "Часы работы"
+  },
+  "languages": {
+    "hy": "HY",
+    "ru": "RU",
+    "en": "EN",
+    "hyFull": "Հայերեն",
+    "ruFull": "Русский",
+    "enFull": "English"
+  }
+}
+

@@ -1,0 +1,58 @@
+rules_version = '2';
+
+// ===============================================================
+// Firebase Storage Security Rules — Xutorok Multi-Restaurant Platform
+// ===============================================================
+// Storage path convention:
+//   restaurants/{restaurantId}/products/{fileName}
+//   restaurants/{restaurantId}/categories/{fileName}
+//   restaurants/{restaurantId}/branding/{fileName}
+// ===============================================================
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isPlatformAdmin() {
+      return isSignedIn() && (
+        request.auth.token.get('platformAdmin', false) == true ||
+        (firestore.exists(/databases/(default)/documents/platformAdmins/$(request.auth.uid)) &&
+         firestore.get(/databases/(default)/documents/platformAdmins/$(request.auth.uid)).data.active == true)
+      );
+    }
+
+    function isRestaurantAdmin(restaurantId) {
+      return isPlatformAdmin() || (
+        isSignedIn() &&
+        firestore.exists(/databases/(default)/documents/restaurants/$(restaurantId)/members/$(request.auth.uid)) &&
+        firestore.get(/databases/(default)/documents/restaurants/$(restaurantId)/members/$(request.auth.uid)).data.status == 'active' &&
+        firestore.get(/databases/(default)/documents/restaurants/$(restaurantId)/members/$(request.auth.uid)).data.restaurantId == restaurantId &&
+        firestore.get(/databases/(default)/documents/restaurants/$(restaurantId)/members/$(request.auth.uid)).data.role in ['restaurantOwner', 'restaurantManager']
+      );
+    }
+
+    function isValidImageUpload() {
+      return request.resource != null &&
+        request.resource.size <= 5 * 1024 * 1024 &&
+        request.resource.contentType.matches('image/(jpeg|png|webp|avif|svg\\+xml)');
+    }
+
+    // Scoped restaurant media folders
+    match /restaurants/{restaurantId}/{folder}/{allPaths=**} {
+      // Published menu images (products, categories, branding) are publicly readable
+      allow read: if folder in ['products', 'categories', 'branding'];
+
+      // Only authorized admins of {restaurantId} can upload/replace valid images or delete them
+      allow create, update: if folder in ['products', 'categories', 'branding'] &&
+        isRestaurantAdmin(restaurantId) &&
+        isValidImageUpload();
+
+      allow delete: if folder in ['products', 'categories', 'branding'] &&
+        isRestaurantAdmin(restaurantId);
+    }
+  }
+}
+
