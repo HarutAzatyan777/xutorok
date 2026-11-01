@@ -1,8 +1,10 @@
 import {
   doc,
   getDoc,
+  onSnapshot,
   serverTimestamp,
   setDoc,
+  type Unsubscribe,
 } from 'firebase/firestore';
 import { appConfig, getRestaurantId } from '../../../config/app';
 import { db } from '../../../config/firebase';
@@ -19,9 +21,83 @@ import type {
   RestaurantProfile,
 } from '../../../types';
 
+export const DEFAULT_BRAND_LOGO_URL = '/Xutorok Logo.svg';
+
+export function normalizeBrandLogoUrl(logoUrl?: string | null): string {
+  const trimmed = logoUrl?.trim() ?? '';
+  if (!trimmed || trimmed === '/logo.svg') {
+    return DEFAULT_BRAND_LOGO_URL;
+  }
+  return trimmed;
+}
+
+function getProfileCacheKey(restaurantId: string): string {
+  return `xutorok_profile_cache_v3_${restaurantId}`;
+}
+
+/**
+ * Reads the last authoritative RestaurantProfile saved/fetched from Firestore
+ * (`restaurants/{restaurantId}`). Returns null if no Firestore profile has been
+ * cached yet so the UI can show a skeleton rather than flashing fallback text/logo.
+ */
+export function getCachedRestaurantProfile(
+  restaurantId = getRestaurantId()
+): RestaurantProfile | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(getProfileCacheKey(restaurantId));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as RestaurantProfile;
+    if (!parsed || typeof parsed !== 'object' || !parsed.name) return null;
+    return {
+      ...parsed,
+      branding: {
+        ...parsed.branding,
+        logoUrl: normalizeBrandLogoUrl(parsed.branding?.logoUrl),
+      },
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function setCachedRestaurantProfile(
+  profile: RestaurantProfile,
+  restaurantId = getRestaurantId()
+): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const cacheable: RestaurantProfile = {
+      id: profile.id || restaurantId,
+      restaurantId: profile.restaurantId || restaurantId,
+      name: profile.name,
+      slug: profile.slug || restaurantId,
+      status: profile.status || 'active',
+      defaultLanguage: profile.defaultLanguage || appConfig.defaultLanguage,
+      supportedLanguages: profile.supportedLanguages || [...appConfig.supportedLanguages],
+      currency: 'AMD',
+      branding: {
+        ...profile.branding,
+        logoUrl: normalizeBrandLogoUrl(profile.branding?.logoUrl),
+      },
+      contact: profile.contact,
+    };
+    window.localStorage.setItem(
+      getProfileCacheKey(restaurantId),
+      JSON.stringify(cacheable)
+    );
+  } catch {
+    // Ignore storage quota or private mode restrictions
+  }
+}
+
 export function getDefaultRestaurantProfile(
   restaurantId = getRestaurantId()
 ): RestaurantProfile {
+  const cached = getCachedRestaurantProfile(restaurantId);
+  if (cached) {
+    return cached;
+  }
   return {
     id: restaurantId,
     restaurantId,
@@ -32,7 +108,7 @@ export function getDefaultRestaurantProfile(
     supportedLanguages: [...appConfig.supportedLanguages],
     currency: 'AMD',
     branding: {
-      logoUrl: '/logo.svg',
+      logoUrl: DEFAULT_BRAND_LOGO_URL,
       primaryColor: '#5c3a1e',
       secondaryColor: '#8c6239',
     },
@@ -52,9 +128,50 @@ export async function fetchRestaurantProfile(
   );
   const snap = await getDoc(docRef);
   if (snap.exists()) {
-    return snap.data();
+    const data = snap.data();
+    const normalized: RestaurantProfile = {
+      ...data,
+      branding: {
+        ...data.branding,
+        logoUrl: normalizeBrandLogoUrl(data.branding?.logoUrl),
+      },
+    };
+    setCachedRestaurantProfile(normalized, restaurantId);
+    return normalized;
   }
   return getDefaultRestaurantProfile(restaurantId);
+}
+
+export function subscribeToRestaurantProfile(
+  onData: (profile: RestaurantProfile) => void,
+  onError?: (err: Error) => void,
+  restaurantId = getRestaurantId()
+): Unsubscribe {
+  const docRef = doc(db, tenantPaths.restaurantDoc(restaurantId)).withConverter(
+    restaurantProfileConverter
+  );
+  return onSnapshot(
+    docRef,
+    (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        const normalized: RestaurantProfile = {
+          ...data,
+          branding: {
+            ...data.branding,
+            logoUrl: normalizeBrandLogoUrl(data.branding?.logoUrl),
+          },
+        };
+        setCachedRestaurantProfile(normalized, restaurantId);
+        onData(normalized);
+      } else {
+        onData(getDefaultRestaurantProfile(restaurantId));
+      }
+    },
+    (err) => {
+      onError?.(err);
+    }
+  );
 }
 
 export interface SaveRestaurantSettingsInput {
@@ -76,11 +193,13 @@ export async function saveRestaurantSettings(
   const brandingRef = doc(db, tenantPaths.settingDoc('branding', restaurantId));
   const menuRef = doc(db, tenantPaths.settingDoc('menu', restaurantId));
 
+  const resolvedLogoUrl = normalizeBrandLogoUrl(input.branding.logoUrl);
+
   const profilePayload = {
     id: restaurantId,
     restaurantId,
     slug: restaurantId,
-    status: 'active',
+    status: 'active' as const,
     name: {
       hy: input.name.hy.trim(),
       ru: input.name.ru.trim(),
@@ -88,10 +207,10 @@ export async function saveRestaurantSettings(
     },
     defaultLanguage: input.defaultLanguage,
     supportedLanguages: input.supportedLanguages,
-    currency: 'AMD',
-    logoUrl: input.branding.logoUrl?.trim() || null,
+    currency: 'AMD' as const,
+    logoUrl: resolvedLogoUrl,
     branding: {
-      logoUrl: input.branding.logoUrl?.trim() || '',
+      logoUrl: resolvedLogoUrl,
       logoPath: input.branding.logoPath?.trim() || '',
       primaryColor: input.branding.primaryColor || '#5c3a1e',
       secondaryColor: input.branding.secondaryColor || '#8c6239',
@@ -115,6 +234,23 @@ export async function saveRestaurantSettings(
     updatedAt: serverTimestamp(),
   };
 
+  // Immediately update local cache so navigating to /menu shows the new settings on frame 0
+  setCachedRestaurantProfile(
+    {
+      id: restaurantId,
+      restaurantId,
+      slug: restaurantId,
+      status: 'active',
+      name: profilePayload.name,
+      defaultLanguage: profilePayload.defaultLanguage,
+      supportedLanguages: profilePayload.supportedLanguages,
+      currency: 'AMD',
+      branding: profilePayload.branding,
+      contact: profilePayload.contact,
+    },
+    restaurantId
+  );
+
   const generalDoc: GeneralSettingsDoc = {
     restaurantId,
     name: profilePayload.name,
@@ -125,7 +261,7 @@ export async function saveRestaurantSettings(
 
   const brandingDoc: BrandingSettingsDoc = {
     restaurantId,
-    logoUrl: input.branding.logoUrl?.trim() || '',
+    logoUrl: resolvedLogoUrl,
     logoPath: input.branding.logoPath?.trim() || '',
     primaryColor: input.branding.primaryColor || '#5c3a1e',
     secondaryColor: input.branding.secondaryColor || '#8c6239',
@@ -157,4 +293,3 @@ export async function saveRestaurantSettings(
     ),
   ]);
 }
-

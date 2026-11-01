@@ -4,9 +4,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Save, Loader2 } from 'lucide-react';
 import { AdminLayout } from '../../features/admin/layouts/AdminLayout';
+import { AdminSettingsSkeleton } from '../../components/common/PageSkeletons';
 import { ImageUploader } from '../../components/common/ImageUploader';
 import { useAuth } from '../../features/auth/hooks/useAuth';
 import {
+  DEFAULT_BRAND_LOGO_URL,
   fetchRestaurantProfile,
   saveRestaurantSettings,
 } from '../../features/settings/services/settingsService';
@@ -59,7 +61,7 @@ export function AdminSettingsPage() {
       supportHy: true,
       supportRu: true,
       supportEn: true,
-      logoUrl: '/logo.svg',
+      logoUrl: DEFAULT_BRAND_LOGO_URL,
       logoPath: '',
       primaryColor: '#5c3a1e',
       secondaryColor: '#8c6239',
@@ -84,7 +86,7 @@ export function AdminSettingsPage() {
           supportHy: langs.has('hy'),
           supportRu: langs.has('ru'),
           supportEn: langs.has('en'),
-          logoUrl: profile.branding?.logoUrl ?? '/logo.svg',
+          logoUrl: profile.branding?.logoUrl ?? DEFAULT_BRAND_LOGO_URL,
           logoPath: profile.branding?.logoPath ?? '',
           primaryColor: profile.branding?.primaryColor ?? '#5c3a1e',
           secondaryColor: profile.branding?.secondaryColor ?? '#8c6239',
@@ -125,7 +127,7 @@ export function AdminSettingsPage() {
           defaultLanguage: values.defaultLanguage,
           supportedLanguages,
           branding: {
-            logoUrl: values.logoUrl || '/logo.svg',
+            logoUrl: values.logoUrl || DEFAULT_BRAND_LOGO_URL,
             logoPath: values.logoPath || '',
             primaryColor: values.primaryColor,
             secondaryColor: values.secondaryColor,
@@ -155,10 +157,7 @@ export function AdminSettingsPage() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="flex items-center justify-center py-20 text-sm text-stone-500">
-          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-          Loading restaurant settings...
-        </div>
+        <AdminSettingsSkeleton />
       </AdminLayout>
     );
   }

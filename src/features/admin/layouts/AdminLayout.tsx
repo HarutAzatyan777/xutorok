@@ -9,7 +9,9 @@ import {
   LogOut,
   ShieldCheck,
 } from 'lucide-react';
+import { BrandLogo } from '../../../components/common/BrandLogo';
 import { useAuth } from '../../auth/hooks/useAuth';
+import { useRestaurantProfile } from '../../settings/hooks/useRestaurantProfile';
 
 const NAV_ITEMS = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
@@ -20,6 +22,7 @@ const NAV_ITEMS = [
 
 export function AdminLayout({ children }: { children: ReactNode }) {
   const { user, role, restaurantId, logout } = useAuth();
+  const { profile, profileReady } = useRestaurantProfile(restaurantId);
 
   return (
     <div className="flex min-h-dvh flex-col bg-stone-100/70 text-stone-900 lg:flex-row">
@@ -28,7 +31,12 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         <div>
           <div className="flex items-center justify-between border-b border-stone-100 px-5 py-4">
             <Link to="/admin" className="flex items-center gap-2.5">
-              <img src="/logo.svg" alt="Xutorok" className="h-8 w-auto" />
+              <BrandLogo
+                logoUrl={profile.branding?.logoUrl}
+                alt={profile.name?.en || 'Restaurant Logo'}
+                ready={profileReady}
+                size="sm"
+              />
               <div>
                 <span className="block text-sm font-bold text-stone-900">
                   Admin Console

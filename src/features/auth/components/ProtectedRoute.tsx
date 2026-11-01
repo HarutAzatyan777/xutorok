@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { ShieldAlert, LogOut, RefreshCw, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { ProtectedRouteSkeleton } from '../../../components/common/PageSkeletons';
 import { useAuth } from '../hooks/useAuth';
 
 export function ProtectedRoute({ children }: { children: ReactNode }) {
@@ -17,14 +18,7 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
   const location = useLocation();
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-stone-50 p-6">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-stone-300 border-t-amber-900" />
-        <p className="mt-4 text-sm font-medium text-stone-600">
-          Verifying administrator authorization for <span className="font-mono">{restaurantId}</span>...
-        </p>
-      </div>
-    );
+    return <ProtectedRouteSkeleton restaurantId={restaurantId} />;
   }
 
   if (!user) {

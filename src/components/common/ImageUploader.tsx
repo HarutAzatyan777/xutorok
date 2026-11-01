@@ -66,12 +66,18 @@ export function ImageUploader({
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         {/* Preview Box */}
-        <div className="relative flex h-32 w-44 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-stone-200 bg-stone-100">
+        <div
+          className={`relative flex h-32 w-44 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-stone-200 ${
+            folder === 'branding' ? 'bg-white p-3' : 'bg-stone-100'
+          }`}
+        >
           {imageUrl ? (
             <img
               src={imageUrl}
               alt="Preview"
-              className="h-full w-full object-cover"
+              className={`h-full w-full ${
+                folder === 'branding' ? 'object-contain' : 'object-cover'
+              }`}
             />
           ) : (
             <div className="flex flex-col items-center gap-1 text-stone-400">

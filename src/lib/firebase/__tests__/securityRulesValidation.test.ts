@@ -45,5 +45,19 @@ describe('Firestore & Storage Security Rules Static & Policy Verification', () =
     expect(storageRules).toContain('request.resource.size <= 5 * 1024 * 1024');
     expect(storageRules).toContain("request.resource.contentType.matches('image/(jpeg|png|webp|avif|svg\\\\+xml)')");
   });
+
+  it('keeps Firebase API keys in environment variables and out of tracked source files', () => {
+    const firebaseConfigSource = fs.readFileSync(
+      path.resolve(process.cwd(), 'src/config/firebase.ts'),
+      'utf-8'
+    );
+    const importScriptSource = fs.readFileSync(
+      path.resolve(process.cwd(), 'scripts/import-xutorok-menu.ts'),
+      'utf-8'
+    );
+    expect(firebaseConfigSource).not.toMatch(/AIza[0-9A-Za-z_-]{35}/);
+    expect(importScriptSource).not.toMatch(/AIza[0-9A-Za-z_-]{35}/);
+    expect(firebaseConfigSource).toContain('import.meta.env.VITE_FIREBASE_API_KEY');
+  });
 });
 

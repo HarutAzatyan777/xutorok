@@ -14,6 +14,7 @@ import {
   Utensils,
 } from 'lucide-react';
 import { AdminLayout } from '../../features/admin/layouts/AdminLayout';
+import { AdminTableSkeleton } from '../../components/common/PageSkeletons';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { useAuth } from '../../features/auth/hooks/useAuth';
 import { subscribeToAdminCategories } from '../../features/categories/services/categoryService';
@@ -203,12 +204,11 @@ export function AdminProductsPage() {
         </div>
 
         {/* Products Table */}
-        <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white">
-          {loading ? (
-            <div className="p-12 text-center text-sm text-stone-500">
-              Loading products...
-            </div>
-          ) : filteredProducts.length === 0 ? (
+        {loading ? (
+          <AdminTableSkeleton rows={7} />
+        ) : (
+          <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white">
+            {filteredProducts.length === 0 ? (
             <div className="p-12 text-center">
               <Utensils className="mx-auto h-8 w-8 text-stone-400" />
               <p className="mt-2 text-sm font-semibold text-stone-800">
@@ -381,7 +381,8 @@ export function AdminProductsPage() {
               </table>
             </div>
           )}
-        </div>
+          </div>
+        )}
       </div>
 
       <ConfirmDialog

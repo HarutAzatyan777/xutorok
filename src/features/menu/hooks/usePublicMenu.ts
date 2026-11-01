@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getRestaurantId } from '../../../config/app';
+import { appConfig, getRestaurantId } from '../../../config/app';
 import { subscribeToPublicCategories } from '../../categories/services/categoryService';
 import { subscribeToPublicProducts } from '../../products/services/productService';
-import {
-  fetchRestaurantProfile,
-  getDefaultRestaurantProfile,
-} from '../../settings/services/settingsService';
+import { subscribeToRestaurantProfile } from '../../settings/services/settingsService';
 import type { MenuCategory, MenuProduct, RestaurantProfile } from '../../../types';
 
 export interface PublicMenuState {
   profile: RestaurantProfile;
+  profileLoaded: boolean;
+  profileReady: boolean;
   categories: MenuCategory[];
   products: MenuProduct[];
   loading: boolean;
@@ -17,16 +16,41 @@ export interface PublicMenuState {
   retry: () => void;
 }
 
+function createEmptyLoadingProfile(restaurantId: string): RestaurantProfile {
+  return {
+    id: restaurantId,
+    restaurantId,
+    name: { hy: '', ru: '', en: '' },
+    slug: restaurantId,
+    status: 'active',
+    defaultLanguage: appConfig.defaultLanguage,
+    supportedLanguages: [...appConfig.supportedLanguages],
+    currency: 'AMD',
+    branding: {
+      logoUrl: '',
+      primaryColor: '#5c3a1e',
+      secondaryColor: '#8c6239',
+    },
+    contact: {
+      phone: '',
+      address: { hy: '', ru: '', en: '' },
+      workingHours: { hy: '', en: '', ru: '' },
+    },
+  };
+}
+
 /**
- * Connects live real-time Firestore queries (`restaurants/{restaurantId}/categories`
- * and `restaurants/{restaurantId}/products`) as the single authoritative source of truth.
- * Never falls back to static JSON or hardcoded product arrays.
+ * Connects live real-time Firestore queries (`restaurants/{restaurantId}`,
+ * `restaurants/{restaurantId}/categories`, and `restaurants/{restaurantId}/products`)
+ * as the single authoritative source of truth.
+ * Never renders default fallback names or logos before Firestore responds.
  */
 export function usePublicMenu(): PublicMenuState {
   const restaurantId = getRestaurantId();
   const [profile, setProfile] = useState<RestaurantProfile>(() =>
-    getDefaultRestaurantProfile(restaurantId)
+    createEmptyLoadingProfile(restaurantId)
   );
+  const [profileLoaded, setProfileLoaded] = useState(false);
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [products, setProducts] = useState<MenuProduct[]>([]);
   const [catLoaded, setCatLoaded] = useState(false);
@@ -35,6 +59,7 @@ export function usePublicMenu(): PublicMenuState {
   const [retryTick, setRetryTick] = useState(0);
 
   const retry = useCallback(() => {
+    setProfileLoaded(false);
     setCatLoaded(false);
     setProdLoaded(false);
     setError(null);
@@ -44,13 +69,18 @@ export function usePublicMenu(): PublicMenuState {
   useEffect(() => {
     let active = true;
 
-    fetchRestaurantProfile(restaurantId)
-      .then((res) => {
-        if (active) setProfile(res);
-      })
-      .catch(() => {
-        // Keep default profile header if restaurant root doc is not yet created
-      });
+    const unsubProfile = subscribeToRestaurantProfile(
+      (res) => {
+        if (!active) return;
+        setProfile(res);
+        setProfileLoaded(true);
+      },
+      () => {
+        if (!active) return;
+        setProfileLoaded(true);
+      },
+      restaurantId
+    );
 
     const unsubCategories = subscribeToPublicCategories(
       (cats) => {
@@ -84,15 +114,19 @@ export function usePublicMenu(): PublicMenuState {
 
     return () => {
       active = false;
+      unsubProfile();
       unsubCategories();
       unsubProducts();
     };
   }, [restaurantId, retryTick]);
 
-  const loading = !catLoaded || !prodLoaded;
+  const loading = !profileLoaded || !catLoaded || !prodLoaded;
+  const profileReady = profileLoaded && !loading;
 
   return {
     profile,
+    profileLoaded,
+    profileReady,
     categories,
     products,
     loading,

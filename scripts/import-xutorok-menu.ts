@@ -92,8 +92,31 @@ async function main() {
     process.exit(0);
   }
 
+  const envLocalPath = path.resolve(process.cwd(), '.env.local');
+  if (fs.existsSync(envLocalPath)) {
+    const envLines = fs.readFileSync(envLocalPath, 'utf-8').split(/\r?\n/);
+    for (const line of envLines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const eqIdx = trimmed.indexOf('=');
+      if (eqIdx > 0) {
+        const key = trimmed.slice(0, eqIdx).trim();
+        const val = trimmed.slice(eqIdx + 1).trim();
+        if (!process.env[key]) {
+          process.env[key] = val;
+        }
+      }
+    }
+  }
+
+  const apiKey = process.env.VITE_FIREBASE_API_KEY || (useEmulator ? 'demo-emulator-api-key' : '');
+  if (!apiKey) {
+    console.error('[Import] Missing VITE_FIREBASE_API_KEY in environment or .env.local');
+    process.exit(1);
+  }
+
   const firebaseConfig = {
-    apiKey: process.env.VITE_FIREBASE_API_KEY || 'AIzaSyCurKxOt2Vyc6PMRxvsOXBhxi6Z23NQ990',
+    apiKey,
     authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN || 'ai-twin-conflicts.firebaseapp.com',
     projectId: process.env.VITE_FIREBASE_PROJECT_ID || 'ai-twin-conflicts',
     storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET || 'ai-twin-conflicts.firebasestorage.app',

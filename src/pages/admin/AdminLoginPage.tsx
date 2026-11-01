@@ -4,7 +4,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Lock, ArrowLeft, AlertCircle, Loader2 } from 'lucide-react';
+import { BrandLogo } from '../../components/common/BrandLogo';
 import { useAuth } from '../../features/auth/hooks/useAuth';
+import { useRestaurantProfile } from '../../features/settings/hooks/useRestaurantProfile';
 
 const loginSchema = z.object({
   email: z.string().trim().email('Please enter a valid email address'),
@@ -15,6 +17,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function AdminLoginPage() {
   const { user, isAuthorizedAdmin, loading, restaurantId, login } = useAuth();
+  const { profile, profileReady } = useRestaurantProfile(restaurantId);
   const [authError, setAuthError] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -84,7 +87,12 @@ export function AdminLoginPage() {
 
         <div className="rounded-3xl border border-stone-200 bg-white p-8 shadow-sm">
           <div className="flex flex-col items-center text-center">
-            <img src="/logo.svg" alt="Xutorok" className="h-12 w-auto" />
+            <BrandLogo
+              logoUrl={profile.branding?.logoUrl}
+              alt={profile.name?.en || 'Restaurant Logo'}
+              ready={profileReady}
+              size="lg"
+            />
             <h1 className="mt-4 text-xl font-bold text-stone-900">
               Restaurant Admin Sign In
             </h1>

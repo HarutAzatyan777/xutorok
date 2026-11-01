@@ -16,6 +16,7 @@ export function PublicMenuPage() {
 
   const {
     profile,
+    profileReady,
     categories,
     products,
     loading,
@@ -88,38 +89,56 @@ export function PublicMenuPage() {
   }, [categories, filteredProducts, selectedCategoryId, searchQuery]);
 
   return (
-    <PublicLayout profile={profile}>
+    <PublicLayout profile={profile} profileReady={profileReady} loading={loading}>
       {/* Hero / Search Bar Section */}
       <section className="border-b border-stone-200/60 bg-white pt-6 pb-5">
         <div className="mx-auto max-w-6xl px-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">
-                {getLocalizedText(profile.name, lang, 'Xutorok')}
-              </h1>
-              <p className="mt-1 text-sm text-stone-500">{t('menu.subtitle')}</p>
+              {!profileReady ? (
+                <div className="space-y-2" aria-hidden="true">
+                  <div className="h-8 w-44 animate-pulse rounded-lg bg-stone-200" />
+                  <div className="h-4 w-64 animate-pulse rounded bg-stone-200/70" />
+                </div>
+              ) : (
+                <>
+                  <h1 className="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">
+                    {getLocalizedText(profile.name, lang, '')}
+                  </h1>
+                  <p className="mt-1 text-sm text-stone-500">{t('menu.subtitle')}</p>
+                </>
+              )}
             </div>
 
             {/* Search Input */}
             <div className="relative w-full sm:max-w-xs">
-              <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-stone-400" />
-              <input
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={t('menu.searchPlaceholder')}
-                aria-label={t('menu.searchPlaceholder')}
-                className="w-full rounded-xl border border-stone-200 bg-stone-50/80 py-2.5 pr-9 pl-10 text-sm text-stone-900 placeholder:text-stone-400 focus:border-amber-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-900/15"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  aria-label={t('menu.clearSearch')}
-                  className="absolute top-1/2 right-2.5 -translate-y-1/2 rounded-lg p-1 text-stone-400 hover:text-stone-700"
-                >
-                  <X className="h-4 w-4" />
-                </button>
+              {!profileReady ? (
+                <div
+                  aria-hidden="true"
+                  className="h-10 w-full animate-pulse rounded-xl bg-stone-200/70"
+                />
+              ) : (
+                <>
+                  <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-stone-400" />
+                  <input
+                    type="search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={t('menu.searchPlaceholder')}
+                    aria-label={t('menu.searchPlaceholder')}
+                    className="w-full rounded-xl border border-stone-200 bg-stone-50/80 py-2.5 pr-9 pl-10 text-sm text-stone-900 placeholder:text-stone-400 focus:border-amber-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-900/15"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      aria-label={t('menu.clearSearch')}
+                      className="absolute top-1/2 right-2.5 -translate-y-1/2 rounded-lg p-1 text-stone-400 hover:text-stone-700"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </div>

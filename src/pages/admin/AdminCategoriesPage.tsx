@@ -14,6 +14,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { AdminLayout } from '../../features/admin/layouts/AdminLayout';
+import { AdminTableSkeleton } from '../../components/common/PageSkeletons';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { ImageUploader } from '../../components/common/ImageUploader';
 import { useAuth } from '../../features/auth/hooks/useAuth';
@@ -488,12 +489,11 @@ export function AdminCategoriesPage() {
 
           {/* Categories List */}
           <div className="lg:col-span-7">
-            <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white">
-              {loading ? (
-                <div className="p-12 text-center text-sm text-stone-500">
-                  Loading categories...
-                </div>
-              ) : categories.length === 0 ? (
+            {loading ? (
+              <AdminTableSkeleton rows={6} />
+            ) : (
+              <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white">
+                {categories.length === 0 ? (
                 <div className="p-12 text-center">
                   <FolderKanban className="mx-auto h-8 w-8 text-stone-400" />
                   <p className="mt-2 text-sm font-semibold text-stone-800">
@@ -593,7 +593,8 @@ export function AdminCategoriesPage() {
                   </table>
                 </div>
               )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
