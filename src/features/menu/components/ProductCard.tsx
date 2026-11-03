@@ -1,121 +1,195 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Utensils, Sparkles } from 'lucide-react';
 import { formatAMD, getLocalizedText } from '../../../lib/utils/format';
+import { normalizeProductImageUrl } from '../utils/productImage';
 import type { Language, MenuProduct } from '../../../types';
 
-interface ProductCardProps {
+export interface ProductCardProps {
   product: MenuProduct;
   categoryName?: string;
   onSelect: (product: MenuProduct) => void;
+  forceCompact?: boolean;
+  onImageError?: (productId: string, failedUrl: string) => void;
 }
 
-export function ProductCard({ product, categoryName, onSelect }: ProductCardProps) {
+export function ProductCard({
+  product,
+  categoryName,
+  onSelect,
+  forceCompact = false,
+  onImageError,
+}: ProductCardProps) {
   const { i18n, t } = useTranslation();
   const lang = (i18n.language?.slice(0, 2) as Language) || 'hy';
+
+  const validImageUrl = normalizeProductImageUrl(product.imageUrl);
+  const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
+
+  const showImage =
+    Boolean(validImageUrl) && !forceCompact && failedImageUrl !== validImageUrl;
 
   const title = getLocalizedText(product.name, lang);
   const description = getLocalizedText(product.description, lang);
   const hasVariants = Boolean(product.variants && product.variants.length > 0);
 
+  const handleActivate = () => {
+    onSelect(product);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onSelect(product);
+    }
+  };
+
+  const handleImageError = () => {
+    if (!validImageUrl) return;
+    setFailedImageUrl(validImageUrl);
+    onImageError?.(product.id, validImageUrl);
+  };
+
+  const priceBlock =
+    hasVariants && product.variants ? (
+      <div className="flex flex-wrap items-center gap-1 sm:gap-1.5">
+        {product.variants.map((variant) => {
+          const vLabel = getLocalizedText(variant.label, lang);
+          return (
+            <span
+              key={variant.id}
+              className="inline-flex items-center gap-1 rounded-lg bg-stone-100 px-1.5 py-0.5 text-[11px] font-medium text-stone-800 sm:px-2 sm:py-1 sm:text-xs"
+            >
+              {vLabel && <span className="text-stone-500">{vLabel}:</span>}
+              <span className="font-bold text-[#5c3a1e]">
+                {formatAMD(variant.price)}
+              </span>
+            </span>
+          );
+        })}
+      </div>
+    ) : (
+      <span className="text-sm font-bold text-[#5c3a1e] sm:text-[15px]">
+        {formatAMD(product.price)}
+      </span>
+    );
+
+  if (showImage && validImageUrl) {
+    return (
+      <article
+        data-testid={`product-card-${product.id}`}
+        data-card-variant="image"
+        onClick={handleActivate}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        role="button"
+        aria-label={`${title} — ${formatAMD(product.price)}`}
+        className={`group relative flex flex-col overflow-hidden rounded-2xl border border-stone-200/90 bg-white transition-colors duration-150 hover:border-stone-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5c3a1e]/50 motion-reduce:transition-none min-[340px]:row-span-2 ${
+          !product.isAvailable ? 'opacity-70' : 'cursor-pointer'
+        }`}
+      >
+        <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-stone-100">
+          <img
+            src={validImageUrl}
+            alt={title}
+            loading="lazy"
+            decoding="async"
+            onError={handleImageError}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          />
+
+          {(product.isFeatured || !product.isAvailable) && (
+            <div className="absolute top-2 left-2 flex flex-wrap gap-1 sm:top-2.5 sm:left-2.5">
+              {product.isFeatured && (
+                <span className="inline-flex items-center rounded-full bg-[#5c3a1e]/90 px-2 py-0.5 text-[10px] font-semibold text-white sm:px-2.5 sm:text-[11px]">
+                  {t('menu.featured')}
+                </span>
+              )}
+              {!product.isAvailable && (
+                <span className="inline-flex items-center rounded-full bg-stone-900/85 px-2 py-0.5 text-[10px] font-semibold text-white sm:px-2.5 sm:text-[11px]">
+                  {t('menu.unavailable')}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-1 flex-col justify-between p-3 sm:p-3.5">
+          <div>
+            {categoryName && (
+              <p className="mb-0.5 truncate text-[10px] font-semibold tracking-wider text-stone-400 uppercase sm:text-[11px]">
+                {categoryName}
+              </p>
+            )}
+            <h3 className="text-sm font-semibold text-stone-900 leading-snug break-words transition-colors group-hover:text-[#5c3a1e] sm:text-[15px]">
+              {title}
+            </h3>
+            {description && (
+              <p className="mt-1 line-clamp-2 text-[11px] text-stone-500 leading-relaxed sm:text-xs">
+                {description}
+              </p>
+            )}
+          </div>
+
+          <div className="mt-2.5 flex items-end justify-between gap-2 border-t border-stone-100 pt-2.5">
+            {priceBlock}
+          </div>
+        </div>
+      </article>
+    );
+  }
+
   return (
     <article
-      onClick={() => onSelect(product)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onSelect(product);
-        }
-      }}
+      data-testid={`product-card-${product.id}`}
+      data-card-variant="compact"
+      onClick={handleActivate}
+      onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
       aria-label={`${title} — ${formatAMD(product.price)}`}
-      className={`group relative flex flex-col overflow-hidden rounded-2xl border border-stone-200/90 bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-stone-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-amber-900/40 ${
+      className={`group relative row-span-1 flex min-h-[88px] flex-col justify-between rounded-2xl border border-stone-200/90 bg-white p-3 transition-colors duration-150 hover:border-stone-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5c3a1e]/50 motion-reduce:transition-none sm:min-h-[96px] sm:p-3.5 ${
         !product.isAvailable ? 'opacity-70' : 'cursor-pointer'
       }`}
     >
-      {/* Image / Placeholder Container */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-stone-100">
-        {product.imageUrl ? (
-          <img
-            src={product.imageUrl}
-            alt={title}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex h-full w-full flex-col items-center justify-center gap-1.5 bg-gradient-to-br from-stone-100 to-stone-200/60 text-stone-400">
-            <Utensils className="h-7 w-7 stroke-[1.5]" />
-            <span className="text-[11px] font-medium tracking-wide uppercase">
-              {t('menu.noImage')}
-            </span>
+      <div>
+        {(categoryName || product.isFeatured || !product.isAvailable) && (
+          <div className="mb-1 flex flex-wrap items-center justify-between gap-1">
+            {categoryName ? (
+              <span className="truncate text-[10px] font-semibold tracking-wider text-stone-400 uppercase sm:text-[11px]">
+                {categoryName}
+              </span>
+            ) : (
+              <span />
+            )}
+            <div className="flex flex-wrap items-center gap-1">
+              {product.isFeatured && (
+                <span className="inline-flex items-center rounded-full bg-[#f5efe8] px-2 py-0.5 text-[10px] font-semibold text-[#5c3a1e]">
+                  {t('menu.featured')}
+                </span>
+              )}
+              {!product.isAvailable && (
+                <span className="inline-flex items-center rounded-full bg-stone-100 px-2 py-0.5 text-[10px] font-semibold text-stone-600">
+                  {t('menu.unavailable')}
+                </span>
+              )}
+            </div>
           </div>
         )}
 
-        {/* Badges */}
-        <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
-          {product.isFeatured && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-amber-900/90 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-xs">
-              <Sparkles className="h-3 w-3" />
-              {t('menu.featured')}
-            </span>
-          )}
-          {!product.isAvailable && (
-            <span className="inline-flex items-center rounded-full bg-stone-900/85 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-xs">
-              {t('menu.unavailable')}
-            </span>
-          )}
-        </div>
+        <h3 className="text-sm font-semibold text-stone-900 leading-snug break-words transition-colors group-hover:text-[#5c3a1e] sm:text-[15px]">
+          {title}
+        </h3>
+
+        {description && (
+          <p className="mt-1 line-clamp-2 text-[11px] text-stone-500 leading-relaxed sm:text-xs">
+            {description}
+          </p>
+        )}
       </div>
 
-      {/* Content */}
-      <div className="flex flex-1 flex-col justify-between p-4">
-        <div>
-          {categoryName && (
-            <p className="text-[11px] font-semibold tracking-wider text-stone-400 uppercase">
-              {categoryName}
-            </p>
-          )}
-          <h3 className="mt-0.5 text-base font-semibold text-stone-900 leading-snug group-hover:text-amber-900 transition-colors">
-            {title}
-          </h3>
-          {description && (
-            <p className="mt-1.5 line-clamp-2 text-xs text-stone-500 leading-relaxed">
-              {description}
-            </p>
-          )}
-        </div>
-
-        {/* Price & Variants */}
-        <div className="mt-4 flex items-end justify-between border-t border-stone-100 pt-3">
-          {hasVariants && product.variants ? (
-            <div className="flex flex-wrap items-center gap-1.5">
-              {product.variants.map((variant) => {
-                const vLabel = getLocalizedText(variant.label, lang);
-                return (
-                  <span
-                    key={variant.id}
-                    className="inline-flex items-center gap-1 rounded-lg bg-stone-100 px-2 py-1 text-xs font-medium text-stone-800"
-                  >
-                    {vLabel && <span className="text-stone-500">{vLabel}:</span>}
-                    <span className="font-bold text-amber-950">
-                      {formatAMD(variant.price)}
-                    </span>
-                  </span>
-                );
-              })}
-            </div>
-          ) : (
-            <span className="text-base font-bold text-amber-950">
-              {formatAMD(product.price)}
-            </span>
-          )}
-
-          <span className="text-xs font-medium text-amber-900 opacity-0 transition-opacity group-hover:opacity-100">
-            {t('menu.viewDetails')} →
-          </span>
-        </div>
+      <div className="mt-2.5 flex items-end justify-between gap-2 border-t border-stone-100 pt-2">
+        {priceBlock}
       </div>
     </article>
   );
 }
-

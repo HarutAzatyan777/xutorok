@@ -4,7 +4,7 @@ import { Search, X, AlertCircle, RefreshCw, UtensilsCrossed } from 'lucide-react
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { CategoryNav } from '../../features/menu/components/CategoryNav';
 import { MenuSkeleton } from '../../features/menu/components/MenuSkeleton';
-import { ProductCard } from '../../features/menu/components/ProductCard';
+import { ProductGrid } from '../../features/menu/components/ProductGrid';
 import { ProductDetailDialog } from '../../features/menu/components/ProductDetailDialog';
 import { usePublicMenu } from '../../features/menu/hooks/usePublicMenu';
 import { getLocalizedText } from '../../lib/utils/format';
@@ -57,14 +57,6 @@ export function PublicMenuPage() {
     }
     return map;
   }, [categories, lang]);
-
-  const productCountsByCategory = useMemo(() => {
-    const counts: Record<string, number> = {};
-    for (const prod of activeProducts) {
-      counts[prod.categoryId] = (counts[prod.categoryId] ?? 0) + 1;
-    }
-    return counts;
-  }, [activeProducts]);
 
   const filteredProducts = useMemo(() => {
     const normalizedSearch = searchQuery.trim().toLowerCase();
@@ -201,8 +193,6 @@ export function PublicMenuPage() {
             categories={categories}
             selectedCategoryId={selectedCategoryId}
             onSelectCategory={setSelectedCategoryId}
-            productCountsByCategory={productCountsByCategory}
-            totalProductCount={activeProducts.length}
           />
 
           <div className="mx-auto max-w-6xl px-4 py-6">
@@ -252,29 +242,19 @@ export function PublicMenuPage() {
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                      {items.map((product) => (
-                        <ProductCard
-                          key={product.id}
-                          product={product}
-                          onSelect={setActiveProduct}
-                        />
-                      ))}
-                    </div>
+                    <ProductGrid
+                      products={items}
+                      onSelectProduct={setActiveProduct}
+                    />
                   </section>
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredProducts.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    categoryName={categoriesById[product.categoryId]}
-                    onSelect={setActiveProduct}
-                  />
-                ))}
-              </div>
+              <ProductGrid
+                products={filteredProducts}
+                categoriesById={categoriesById}
+                onSelectProduct={setActiveProduct}
+              />
             )}
           </div>
         </>
