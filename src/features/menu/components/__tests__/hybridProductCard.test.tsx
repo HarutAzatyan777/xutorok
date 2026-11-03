@@ -1,5 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
+import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { PublicLayout } from '../../../../components/layout/PublicLayout';
 import { ProductCard } from '../ProductCard';
 import { ProductGrid } from '../ProductGrid';
 import { ProductDetailDialog } from '../ProductDetailDialog';
@@ -357,5 +359,59 @@ describe('Hybrid Product Cards & Grid Redesign (Tasks 1–9)', () => {
     );
     expect(dialogWithImgHtml).toContain('<img');
     expect(dialogWithImgHtml).toContain('https://example.com/khorovats.jpg');
+  });
+
+  it('15. Simplifies header to logo-only, preserves dynamic Firestore branding colors, and localizes menu heading/subtitle across HY/RU/EN', () => {
+    const html = renderToStaticMarkup(
+      <MemoryRouter>
+        <PublicLayout
+          settingsStatus="ready"
+          profile={{
+            id: 'xutorok',
+            restaurantId: 'xutorok',
+            slug: 'xutorok',
+            status: 'active',
+            currency: 'AMD',
+            name: { hy: 'Խուտոռոկ', ru: 'Хуторок', en: 'Xutorok' },
+            defaultLanguage: 'hy',
+            supportedLanguages: ['hy', 'ru', 'en'],
+            branding: {
+              logoUrl:
+                'https://firebasestorage.googleapis.com/v0/b/ai-twin-conflicts/o/logo.svg',
+              primaryColor: '#4a2c16',
+              secondaryColor: '#8c6239',
+            },
+          }}
+        >
+          <div>Menu Body</div>
+        </PublicLayout>
+      </MemoryRouter>
+    );
+
+    // Header link contains only the logo image, not a separate restaurant name text span
+    const headerMatch = html.match(/<header[\s\S]*?<\/header>/);
+    expect(headerMatch).not.toBeNull();
+    expect(headerMatch![0]).toContain(
+      'https://firebasestorage.googleapis.com/v0/b/ai-twin-conflicts/o/logo.svg'
+    );
+    expect(headerMatch![0]).not.toContain('>Խուտոռոկ<');
+    expect(headerMatch![0]).toContain('Language selector');
+
+    // Dynamic Firestore branding CSS custom properties are preserved
+    expect(html).toContain('--color-primary:#4a2c16');
+    expect(html).toContain('--color-secondary:#8c6239');
+
+    // Localized Menu heading & cuisine description in HY / RU / EN
+    setAppLanguage('hy');
+    expect(i18n.t('menu.title')).toBe('Մենյու');
+    expect(i18n.t('menu.subtitle')).toBe('Հայկական և ուկրաինական խոհանոց');
+
+    setAppLanguage('ru');
+    expect(i18n.t('menu.title')).toBe('Меню');
+    expect(i18n.t('menu.subtitle')).toBe('Армянская и украинская кухня');
+
+    setAppLanguage('en');
+    expect(i18n.t('menu.title')).toBe('Menu');
+    expect(i18n.t('menu.subtitle')).toBe('Armenian and Ukrainian cuisine');
   });
 });

@@ -21,7 +21,7 @@ export function LanguageSwitcher({
     <div
       role="group"
       aria-label="Language selector"
-      className="inline-flex items-center rounded-xl border border-stone-200 bg-stone-100/80 p-1"
+      className="inline-flex shrink-0 items-center rounded-xl border border-app-border bg-app-bg p-1"
     >
       {allowedLanguages.map((lang) => {
         const isActive = currentLang === lang;
@@ -32,10 +32,10 @@ export function LanguageSwitcher({
             onClick={() => setAppLanguage(lang)}
             aria-pressed={isActive}
             title={t(`languages.${lang}Full`)}
-            className={`min-w-[2.5rem] rounded-lg px-2.5 py-1.5 text-xs font-semibold tracking-wide transition-all ${
+            className={`min-w-[2.35rem] rounded-lg px-2.5 py-1.5 text-xs font-semibold tracking-wide transition-colors ${
               isActive
-                ? 'bg-amber-900 text-white shadow-xs'
-                : 'text-stone-600 hover:bg-stone-200/70 hover:text-stone-900'
+                ? 'bg-brand-primary text-white shadow-xs'
+                : 'text-app-text-secondary hover:bg-app-surface-muted hover:text-app-text'
             }`}
           >
             {LANGUAGE_LABELS[lang]}
@@ -45,4 +45,3 @@ export function LanguageSwitcher({
     </div>
   );
 }
-

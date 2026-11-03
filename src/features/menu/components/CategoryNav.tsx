@@ -19,7 +19,7 @@ export function CategoryNav({
   return (
     <nav
       aria-label="Menu categories"
-      className="sticky top-[69px] z-20 border-b border-stone-200/80 bg-[#faf9f6]/95 backdrop-blur-md"
+      className="sticky top-[69px] z-20 border-b border-app-border bg-app-bg/95 backdrop-blur-md"
     >
       <div className="mx-auto max-w-6xl px-4">
         <div className="no-scrollbar flex items-center gap-2 overflow-x-auto py-3">
@@ -27,10 +27,10 @@ export function CategoryNav({
             type="button"
             onClick={() => onSelectCategory(null)}
             aria-pressed={selectedCategoryId === null}
-            className={`inline-flex shrink-0 items-center rounded-full px-4 py-2 text-sm font-medium transition-all ${
+            className={`inline-flex shrink-0 items-center rounded-full px-4 py-2 text-sm font-medium transition-colors ${
               selectedCategoryId === null
-                ? 'bg-amber-900 text-white shadow-xs'
-                : 'border border-stone-200 bg-white text-stone-700 hover:border-stone-300 hover:bg-stone-50'
+                ? 'bg-brand-primary text-white shadow-xs'
+                : 'border border-app-border bg-white text-app-text-secondary hover:border-brand-gold/70 hover:bg-app-surface-muted hover:text-app-text'
             }`}
           >
             <span>{t('menu.allCategories')}</span>
@@ -46,10 +46,10 @@ export function CategoryNav({
                 type="button"
                 onClick={() => onSelectCategory(cat.id)}
                 aria-pressed={isSelected}
-                className={`inline-flex shrink-0 items-center rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                className={`inline-flex shrink-0 items-center rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                   isSelected
-                    ? 'bg-amber-900 text-white shadow-xs'
-                    : 'border border-stone-200 bg-white text-stone-700 hover:border-stone-300 hover:bg-stone-50'
+                    ? 'bg-brand-primary text-white shadow-xs'
+                    : 'border border-app-border bg-white text-app-text-secondary hover:border-brand-gold/70 hover:bg-app-surface-muted hover:text-app-text'
                 }`}
               >
                 <span>{label}</span>

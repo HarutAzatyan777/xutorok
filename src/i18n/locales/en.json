@@ -1,7 +1,7 @@
 {
   "menu": {
-    "title": "Digital Menu",
-    "subtitle": "Traditional Ukrainian & Armenian Cuisine",
+    "title": "Menu",
+    "subtitle": "Armenian and Ukrainian cuisine",
     "allCategories": "All Items",
     "featured": "Featured",
     "searchPlaceholder": "Search dishes or drinks...",
@@ -42,4 +42,3 @@
     "enFull": "English"
   }
 }
-

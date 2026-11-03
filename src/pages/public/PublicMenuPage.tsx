@@ -91,75 +91,73 @@ export function PublicMenuPage() {
       .filter((group) => group.items.length > 0);
   }, [categories, filteredProducts, selectedCategoryId, searchQuery]);
 
-  const restaurantName =
-    settingsStatus === 'ready' && profile
-      ? getLocalizedText(profile.name, lang)
-      : '';
-
   return (
     <PublicLayout
       profile={profile}
       settingsStatus={settingsStatus}
       onRetrySettings={retrySettings}
     >
-      {/* Hero / Search Bar Section — stable dimensions during loading */}
-      <section className="border-b border-stone-200/60 bg-white pt-6 pb-5">
+      {/* Main Heading & Search Section */}
+      <section className="border-b border-app-border bg-white pt-5 pb-4 sm:pt-6 sm:pb-5">
         <div className="mx-auto max-w-6xl px-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="min-h-[3.5rem] flex flex-col justify-center">
-              {settingsStatus === 'loading' ? (
-                <div
-                  data-testid="hero-branding-skeleton"
-                  aria-busy="true"
-                  className="space-y-2"
+          <div className="flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="flex items-center gap-2.5">
+                <span
+                  aria-hidden="true"
+                  className="h-5 w-1 shrink-0 rounded-full bg-brand-gold"
+                />
+                <h1
+                  data-testid="menu-main-heading"
+                  className="text-2xl font-bold tracking-tight text-app-text sm:text-3xl"
                 >
-                  <div className="h-8 w-44 animate-pulse rounded-lg bg-stone-200/80 sm:h-9 sm:w-56" />
-                  <div className="h-4 w-60 animate-pulse rounded bg-stone-200/60" />
-                </div>
-              ) : settingsStatus === 'error' ? (
+                  {t('menu.title')}
+                </h1>
+              </div>
+              <p
+                data-testid="menu-main-subtitle"
+                className="mt-1 pl-3.5 text-xs text-app-text-muted sm:text-sm"
+              >
+                {t('menu.subtitle')}
+              </p>
+
+              {settingsStatus === 'error' && (
                 <div
                   data-testid="settings-error-banner"
                   role="alert"
-                  className="flex flex-wrap items-center gap-3 rounded-xl border border-amber-200 bg-amber-50/80 px-3.5 py-2 text-xs text-amber-950"
+                  className="mt-2.5 flex flex-wrap items-center gap-2.5 rounded-xl border border-app-border bg-app-surface-muted px-3 py-1.5 text-xs text-app-text"
                 >
-                  <AlertCircle className="h-4 w-4 shrink-0 text-amber-700" />
+                  <AlertCircle className="h-3.5 w-3.5 shrink-0 text-brand-primary" />
                   <span>{settingsError || t('menu.errorDescription')}</span>
                   <button
                     type="button"
                     onClick={retrySettings}
-                    className="inline-flex items-center gap-1 rounded-lg bg-amber-900 px-2.5 py-1 text-xs font-semibold text-white hover:bg-amber-950"
+                    className="inline-flex items-center gap-1 rounded-lg bg-brand-primary px-2.5 py-1 text-xs font-semibold text-white hover:bg-brand-primary-hover"
                   >
                     <RefreshCw className="h-3 w-3" />
                     <span>{t('menu.retry')}</span>
                   </button>
-                </div>
-              ) : (
-                <div>
-                  <h1 className="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">
-                    {restaurantName || t('menu.title')}
-                  </h1>
-                  <p className="mt-1 text-sm text-stone-500">{t('menu.subtitle')}</p>
                 </div>
               )}
             </div>
 
             {/* Search Input */}
             <div className="relative w-full sm:max-w-xs">
-              <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-stone-400" />
+              <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-app-text-muted" />
               <input
                 type="search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('menu.searchPlaceholder')}
                 aria-label={t('menu.searchPlaceholder')}
-                className="w-full rounded-xl border border-stone-200 bg-stone-50/80 py-2.5 pr-9 pl-10 text-sm text-stone-900 placeholder:text-stone-400 focus:border-amber-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-900/15"
+                className="w-full rounded-xl border border-app-border bg-app-bg/70 py-2.5 pr-9 pl-10 text-sm text-app-text placeholder:text-app-text-muted focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary/15"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
                   aria-label={t('menu.clearSearch')}
-                  className="absolute top-1/2 right-2.5 -translate-y-1/2 rounded-lg p-1 text-stone-400 hover:text-stone-700"
+                  className="absolute top-1/2 right-2.5 -translate-y-1/2 rounded-lg p-1 text-app-text-muted hover:text-app-text"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -176,12 +174,12 @@ export function PublicMenuPage() {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600">
             <AlertCircle className="h-6 w-6" />
           </div>
-          <h2 className="mt-4 text-lg font-bold text-stone-900">{t('menu.errorTitle')}</h2>
-          <p className="mt-1.5 text-sm text-stone-500">{t('menu.errorDescription')}</p>
+          <h2 className="mt-4 text-lg font-bold text-app-text">{t('menu.errorTitle')}</h2>
+          <p className="mt-1.5 text-sm text-app-text-muted">{t('menu.errorDescription')}</p>
           <button
             type="button"
             onClick={retry}
-            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-950"
+            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-primary-hover"
           >
             <RefreshCw className="h-4 w-4" />
             {t('menu.retry')}
@@ -197,22 +195,22 @@ export function PublicMenuPage() {
 
           <div className="mx-auto max-w-6xl px-4 py-6">
             {activeProducts.length === 0 ? (
-              <div className="rounded-2xl border border-stone-200 bg-white p-12 text-center">
-                <UtensilsCrossed className="mx-auto h-10 w-10 text-stone-400 stroke-[1.5]" />
-                <h2 className="mt-3 text-lg font-bold text-stone-900">
+              <div className="rounded-2xl border border-app-border bg-white p-12 text-center">
+                <UtensilsCrossed className="mx-auto h-10 w-10 text-app-text-muted stroke-[1.5]" />
+                <h2 className="mt-3 text-lg font-bold text-app-text">
                   {t('menu.menuEmptyTitle')}
                 </h2>
-                <p className="mt-1 text-sm text-stone-500">
+                <p className="mt-1 text-sm text-app-text-muted">
                   {t('menu.menuEmptyDescription')}
                 </p>
               </div>
             ) : filteredProducts.length === 0 ? (
-              <div className="rounded-2xl border border-stone-200 bg-white p-12 text-center">
-                <Search className="mx-auto h-10 w-10 text-stone-400 stroke-[1.5]" />
-                <h2 className="mt-3 text-lg font-bold text-stone-900">
+              <div className="rounded-2xl border border-app-border bg-white p-12 text-center">
+                <Search className="mx-auto h-10 w-10 text-app-text-muted stroke-[1.5]" />
+                <h2 className="mt-3 text-lg font-bold text-app-text">
                   {t('menu.emptyTitle')}
                 </h2>
-                <p className="mt-1 text-sm text-stone-500">
+                <p className="mt-1 text-sm text-app-text-muted">
                   {t('menu.emptyDescription')}
                 </p>
                 <button
@@ -221,7 +219,7 @@ export function PublicMenuPage() {
                     setSearchQuery('');
                     setSelectedCategoryId(null);
                   }}
-                  className="mt-4 inline-flex items-center rounded-xl border border-stone-300 bg-white px-4 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50"
+                  className="mt-4 inline-flex items-center rounded-xl border border-app-border bg-white px-4 py-2 text-xs font-semibold text-app-text hover:bg-app-surface-muted"
                 >
                   {t('menu.clearSearch')}
                 </button>
@@ -230,14 +228,20 @@ export function PublicMenuPage() {
               <div className="space-y-10">
                 {groupedByCategory.map(({ category, items }) => (
                   <section key={category.id} aria-labelledby={`cat-heading-${category.id}`}>
-                    <div className="mb-4 flex items-baseline justify-between border-b border-stone-200/80 pb-2">
-                      <h2
-                        id={`cat-heading-${category.id}`}
-                        className="text-xl font-bold text-stone-900"
-                      >
-                        {getLocalizedText(category.name, lang)}
-                      </h2>
-                      <span className="text-xs font-medium text-stone-500">
+                    <div className="mb-4 flex items-baseline justify-between border-b border-app-border pb-2.5">
+                      <div className="flex items-center gap-2">
+                        <span
+                          aria-hidden="true"
+                          className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-gold"
+                        />
+                        <h2
+                          id={`cat-heading-${category.id}`}
+                          className="text-lg font-bold text-app-text sm:text-xl"
+                        >
+                          {getLocalizedText(category.name, lang)}
+                        </h2>
+                      </div>
+                      <span className="text-xs font-medium text-app-text-muted">
                         {t('menu.itemsCount', { count: items.length })}
                       </span>
                     </div>
