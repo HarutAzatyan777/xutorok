@@ -23,13 +23,23 @@ export function CategoryNav({
     <nav
       id="menu-categories-nav"
       aria-label="Menu categories"
-      className={`sticky top-[69px] z-20 border-b backdrop-blur-md transition-colors duration-200 ${
+      className={`sticky top-14 sm:top-16 z-20 border-b backdrop-blur-md transition-colors duration-200 ${
         isDark
-          ? 'border-[#4A2C16] bg-[#23160e]/95'
+          ? 'border-[#4A2C16] bg-[#302019]/95'
           : 'border-app-border bg-[#FBF7F2]/95'
       }`}
     >
-      <div className="mx-auto max-w-6xl px-4">
+      <div className="relative mx-auto max-w-6xl px-4">
+        {/* Right-edge subtle gradient fade indicating more horizontal categories */}
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute right-4 top-0 bottom-0 w-8 z-10 transition-opacity duration-200 ${
+            isDark
+              ? 'bg-gradient-to-l from-[#302019] to-transparent'
+              : 'bg-gradient-to-l from-[#FBF7F2] to-transparent'
+          }`}
+        />
+
         <div className="no-scrollbar flex items-center gap-2 overflow-x-auto py-3">
           <button
             type="button"
@@ -37,12 +47,10 @@ export function CategoryNav({
             aria-pressed={selectedCategoryId === null}
             className={`inline-flex shrink-0 items-center rounded-full px-4 py-2 text-sm font-medium transition-colors ${
               selectedCategoryId === null
-                ? isDark
-                  ? 'bg-[#C8A77A] text-[#23160e] font-semibold shadow-xs'
-                  : 'bg-[#2F1E14] text-[#F4EEE8] shadow-xs'
+                ? 'bg-[#C5A47A] text-[#241B17] font-semibold shadow-xs'
                 : isDark
-                  ? 'border border-[#4A2C16] bg-[#2F1E14] text-[#D8CBBF] hover:border-[#C8A77A]/70 hover:bg-[#3D261A] hover:text-[#F4EEE8]'
-                  : 'border border-app-border bg-white text-app-text-secondary hover:border-brand-gold/70 hover:bg-[#F5EFE7] hover:text-app-text'
+                  ? 'border border-[#C5A47A]/30 bg-[#3D261A]/40 text-[#F8F1E9] hover:border-[#C5A47A]/70 hover:bg-[#3D261A] hover:text-white'
+                  : 'border border-app-border bg-[#FFF9F2] text-[#241B17] hover:border-brand-gold/70 hover:bg-[#F5EFE7]'
             }`}
           >
             <span>{t('menu.allCategories')}</span>
@@ -60,12 +68,10 @@ export function CategoryNav({
                 aria-pressed={isSelected}
                 className={`inline-flex shrink-0 items-center rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                   isSelected
-                    ? isDark
-                      ? 'bg-[#C8A77A] text-[#23160e] font-semibold shadow-xs'
-                      : 'bg-[#2F1E14] text-[#F4EEE8] shadow-xs'
+                    ? 'bg-[#C5A47A] text-[#241B17] font-semibold shadow-xs'
                     : isDark
-                      ? 'border border-[#4A2C16] bg-[#2F1E14] text-[#D8CBBF] hover:border-[#C8A77A]/70 hover:bg-[#3D261A] hover:text-[#F4EEE8]'
-                      : 'border border-app-border bg-white text-app-text-secondary hover:border-brand-gold/70 hover:bg-[#F5EFE7] hover:text-app-text'
+                      ? 'border border-[#C5A47A]/30 bg-[#3D261A]/40 text-[#F8F1E9] hover:border-[#C5A47A]/70 hover:bg-[#3D261A] hover:text-white'
+                      : 'border border-app-border bg-[#FFF9F2] text-[#241B17] hover:border-brand-gold/70 hover:bg-[#F5EFE7]'
                 }`}
               >
                 <span>{label}</span>

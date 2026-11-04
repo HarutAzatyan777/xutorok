@@ -93,7 +93,7 @@ export function ProductDetailDialog({
       {...({ closedby: 'any' } as Record<string, string>)}
       className={`m-auto w-[calc(100%-2rem)] max-w-lg overflow-hidden rounded-3xl border shadow-2xl open:flex open:flex-col transition-colors duration-200 ${
         isDark
-          ? 'border-[#4A2C16] bg-[#2F1E14] text-[#F4EEE8]'
+          ? 'border-[#4A2C16] bg-[#302019] text-[#F8F1E9]'
           : 'border-stone-200 bg-white text-stone-900'
       }`}
     >
@@ -115,9 +115,9 @@ export function ProductDetailDialog({
                   value="close"
                   autoFocus
                   aria-label={t('menu.closeDetails')}
-                  className={`flex h-10 w-10 items-center justify-center rounded-full shadow-sm backdrop-blur-xs transition focus:outline-none focus:ring-2 focus:ring-[#C8A77A] ${
+                  className={`flex h-10 w-10 items-center justify-center rounded-full shadow-sm backdrop-blur-xs transition focus:outline-none focus:ring-2 focus:ring-[#C5A47A] ${
                     isDark
-                      ? 'bg-[#2F1E14]/90 text-[#F4EEE8] hover:bg-[#2F1E14]'
+                      ? 'bg-[#302019]/90 text-[#F8F1E9] hover:bg-[#302019]'
                       : 'bg-white/90 text-stone-800 hover:bg-white'
                   }`}
                 >
@@ -135,7 +135,7 @@ export function ProductDetailDialog({
                   {categoryName && (
                     <span
                       className={`text-xs font-semibold tracking-wider uppercase ${
-                        isDark ? 'text-[#C8B9AD]' : 'text-stone-400'
+                        isDark ? 'text-[#D8CBBF]' : 'text-stone-400'
                       }`}
                     >
                       {categoryName}
@@ -148,7 +148,7 @@ export function ProductDetailDialog({
                           ? 'bg-emerald-950/60 text-emerald-300 border border-emerald-800/40'
                           : 'bg-emerald-50 text-emerald-800'
                         : isDark
-                          ? 'bg-[#3D261A] text-[#C8B9AD]'
+                          ? 'bg-[#3D261A] text-[#D8CBBF]'
                           : 'bg-stone-100 text-stone-600'
                     }`}
                   >
@@ -168,9 +168,9 @@ export function ProductDetailDialog({
                       value="close"
                       autoFocus
                       aria-label={t('menu.closeDetails')}
-                      className={`flex h-9 w-9 items-center justify-center rounded-full border transition focus:outline-none focus:ring-2 focus:ring-[#C8A77A] ${
+                      className={`flex h-9 w-9 items-center justify-center rounded-full border transition focus:outline-none focus:ring-2 focus:ring-[#C5A47A] ${
                         isDark
-                          ? 'border-[#4A2C16] bg-[#3D261A] text-[#F4EEE8] hover:bg-[#4A2C16]'
+                          ? 'border-[#4A2C16] bg-[#3D261A] text-[#F8F1E9] hover:bg-[#4A2C16]'
                           : 'border-stone-200 bg-stone-50 text-stone-700 hover:bg-stone-100'
                       }`}
                     >
@@ -183,7 +183,7 @@ export function ProductDetailDialog({
               <h2
                 id={titleId}
                 className={`mt-2 text-2xl font-bold break-words ${
-                  isDark ? 'text-[#F4EEE8]' : 'text-stone-900'
+                  isDark ? 'text-[#F8F1E9]' : 'text-stone-900'
                 }`}
               >
                 {title}
@@ -202,7 +202,7 @@ export function ProductDetailDialog({
                 <div>
                   <p
                     className={`text-xs font-semibold tracking-wider uppercase ${
-                      isDark ? 'text-[#C8A77A]' : 'text-stone-500'
+                      isDark ? 'text-[#C5A47A]' : 'text-stone-500'
                     }`}
                   >
                     {t('menu.variantsTitle')}
@@ -230,7 +230,7 @@ export function ProductDetailDialog({
                           </span>
                           <span
                             className={`text-base font-bold ${
-                              isDark ? 'text-[#C8A77A]' : 'text-[#4A2C16]'
+                              isDark ? 'text-[#C5A47A]' : 'text-[#4A2C16]'
                             }`}
                           >
                             {formatAMD(variant.price)}
@@ -244,14 +244,14 @@ export function ProductDetailDialog({
                 <div className="flex items-center justify-between">
                   <span
                     className={`text-sm font-medium ${
-                      isDark ? 'text-[#C8B9AD]' : 'text-stone-600'
+                      isDark ? 'text-[#D8CBBF]' : 'text-stone-600'
                     }`}
                   >
                     {t('menu.priceLabel')}
                   </span>
                   <span
                     className={`text-xl font-bold ${
-                      isDark ? 'text-[#C8A77A]' : 'text-[#4A2C16]'
+                      isDark ? 'text-[#C5A47A]' : 'text-[#4A2C16]'
                     }`}
                   >
                     {formatAMD(product.price)}
@@ -265,7 +265,7 @@ export function ProductDetailDialog({
               <div>
                 <h3
                   className={`text-xs font-semibold tracking-wider uppercase ${
-                    isDark ? 'text-[#C8A77A]' : 'text-stone-500'
+                    isDark ? 'text-[#C5A47A]' : 'text-stone-500'
                   }`}
                 >
                   {t('menu.descriptionLabel')}
@@ -290,7 +290,7 @@ export function ProductDetailDialog({
             >
               <div
                 className={`flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase ${
-                  isDark ? 'text-[#C8A77A]' : 'text-stone-500'
+                  isDark ? 'text-[#C5A47A]' : 'text-stone-500'
                 }`}
               >
                 <Globe className="h-3.5 w-3.5" />
@@ -300,14 +300,14 @@ export function ProductDetailDialog({
                 <div className="flex items-baseline justify-between gap-4">
                   <dt
                     className={`text-xs font-semibold ${
-                      isDark ? 'text-[#C8B9AD]' : 'text-stone-400'
+                      isDark ? 'text-[#D8CBBF]' : 'text-stone-400'
                     }`}
                   >
                     HY
                   </dt>
                   <dd
                     className={`font-medium text-right ${
-                      isDark ? 'text-[#F4EEE8]' : 'text-stone-800'
+                      isDark ? 'text-[#F8F1E9]' : 'text-stone-800'
                     }`}
                   >
                     {product.name.hy}
@@ -320,14 +320,14 @@ export function ProductDetailDialog({
                 >
                   <dt
                     className={`text-xs font-semibold ${
-                      isDark ? 'text-[#C8B9AD]' : 'text-stone-400'
+                      isDark ? 'text-[#D8CBBF]' : 'text-stone-400'
                     }`}
                   >
                     RU
                   </dt>
                   <dd
                     className={`font-medium text-right ${
-                      isDark ? 'text-[#F4EEE8]' : 'text-stone-800'
+                      isDark ? 'text-[#F8F1E9]' : 'text-stone-800'
                     }`}
                   >
                     {product.name.ru}
@@ -340,14 +340,14 @@ export function ProductDetailDialog({
                 >
                   <dt
                     className={`text-xs font-semibold ${
-                      isDark ? 'text-[#C8B9AD]' : 'text-stone-400'
+                      isDark ? 'text-[#D8CBBF]' : 'text-stone-400'
                     }`}
                   >
                     EN
                   </dt>
                   <dd
                     className={`font-medium text-right ${
-                      isDark ? 'text-[#F4EEE8]' : 'text-stone-800'
+                      isDark ? 'text-[#F8F1E9]' : 'text-stone-800'
                     }`}
                   >
                     {product.name.en}
@@ -362,7 +362,7 @@ export function ProductDetailDialog({
                 value="close"
                 className={`w-full rounded-xl py-3 text-sm font-semibold transition ${
                   isDark
-                    ? 'bg-[#C8A77A] text-[#23160e] hover:bg-[#d8b88d]'
+                    ? 'bg-[#C5A47A] text-[#241B17] hover:bg-[#d8b88d]'
                     : 'bg-stone-900 text-white hover:bg-stone-800'
                 }`}
               >

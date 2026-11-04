@@ -7,8 +7,6 @@ import {
   Clock,
   Lock,
   Menu as MenuIcon,
-  Sun,
-  Moon,
 } from 'lucide-react';
 import { LanguageSwitcher } from '../common/LanguageSwitcher';
 import { BurgerDrawer } from './BurgerDrawer';
@@ -38,7 +36,7 @@ export function PublicLayout({
 }: PublicLayoutProps) {
   const { i18n, t } = useTranslation();
   const lang = (i18n.language?.slice(0, 2) as Language) || 'hy';
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const isDark = theme === 'dark';
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -90,12 +88,12 @@ export function PublicLayout({
       style={dynamicThemeVars}
       className="flex min-h-dvh flex-col bg-app-bg text-app-text transition-colors duration-200"
     >
-      {/* Top Header Bar — Single clean header with Burger on left, Theme & Lang switcher on right */}
+      {/* Top Header Bar — Clean header with Burger on left, Lang switcher on right (~56-64px) */}
       <header
-        className={`sticky top-0 z-30 h-[69px] border-b backdrop-blur-md transition-colors duration-200 ${
+        className={`sticky top-0 z-30 h-14 sm:h-16 border-b backdrop-blur-md transition-colors duration-200 ${
           isDark
-            ? 'border-[#4A2C16] bg-[#2F1E14]/95 text-[#F4EEE8]'
-            : 'border-app-border bg-white/95 text-app-text'
+            ? 'border-[#4A2C16] bg-[#302019]/95 text-[#F8F1E9]'
+            : 'border-app-border bg-[#FBF7F2]/95 text-app-text'
         }`}
       >
         <div className="mx-auto flex h-full max-w-6xl items-center justify-between gap-3 px-4">
@@ -105,9 +103,9 @@ export function PublicLayout({
               type="button"
               onClick={() => setIsDrawerOpen(true)}
               aria-label={t('nav.openMenu')}
-              className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8A77A] ${
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A47A] ${
                 isDark
-                  ? 'border-[#4A2C16] bg-[#3D261A] text-[#F4EEE8] hover:border-[#C8A77A]/60 hover:bg-[#4A2C16]'
+                  ? 'border-[#4A2C16] bg-[#3D261A] text-[#F8F1E9] hover:border-[#C5A47A]/60 hover:bg-[#4A2C16]'
                   : 'border-app-border bg-white text-app-text hover:bg-app-surface-muted'
               }`}
             >
@@ -115,24 +113,8 @@ export function PublicLayout({
             </button>
           </div>
 
-          {/* Right: Theme Toggle (Dark/Light) + Language Switcher */}
+          {/* Right: Language Switcher */}
           <div className="flex items-center gap-2 sm:gap-2.5">
-            {/* Dark / Light Mode Switcher */}
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-label={isDark ? t('nav.lightMode') : t('nav.darkMode')}
-              title={isDark ? t('nav.lightMode') : t('nav.darkMode')}
-              className={`inline-flex h-9 w-9 items-center justify-center rounded-xl border transition-all focus:outline-none focus:ring-2 focus:ring-[#C8A77A] ${
-                isDark
-                  ? 'border-[#4A2C16] bg-[#3D261A] text-[#C8A77A] hover:bg-[#4A2C16]'
-                  : 'border-app-border bg-white text-[#4A2C16] hover:bg-app-surface-muted'
-              }`}
-            >
-              {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </button>
-
-            {/* Language Switcher */}
             <LanguageSwitcher
               variant={isDark ? 'dark' : 'light'}
               allowedLanguages={profile?.supportedLanguages}

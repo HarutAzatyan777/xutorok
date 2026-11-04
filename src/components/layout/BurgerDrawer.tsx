@@ -135,7 +135,7 @@ export function BurgerDrawer({
         ref={drawerRef}
         className={`relative ml-auto flex h-full w-full max-w-sm flex-col shadow-2xl transition-colors duration-200 sm:max-w-md ${
           isDark
-            ? 'bg-[#2F1E14] text-[#F4EEE8]'
+            ? 'bg-[#302019] text-[#F8F1E9]'
             : 'bg-white text-app-text'
         }`}
       >
@@ -149,7 +149,7 @@ export function BurgerDrawer({
             <div
               className={`flex h-9 w-9 items-center justify-center rounded-xl ${
                 isDark
-                  ? 'bg-[#3D261A] text-[#C8A77A]'
+                  ? 'bg-[#3D261A] text-[#C5A47A]'
                   : 'bg-app-surface-muted text-brand-primary'
               }`}
             >
@@ -161,7 +161,7 @@ export function BurgerDrawer({
               </span>
               <span
                 className={`block text-xs ${
-                  isDark ? 'text-[#C8B9AD]' : 'text-app-text-muted'
+                  isDark ? 'text-[#D8CBBF]' : 'text-app-text-muted'
                 }`}
               >
                 {t('menu.subtitle')}
@@ -174,9 +174,9 @@ export function BurgerDrawer({
             type="button"
             onClick={onClose}
             aria-label={t('nav.closeMenu')}
-            className={`flex h-9 w-9 items-center justify-center rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8A77A] ${
+            className={`flex h-9 w-9 items-center justify-center rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A47A] ${
               isDark
-                ? 'bg-[#3D261A] text-[#F4EEE8] hover:bg-[#4A2C16]'
+                ? 'bg-[#3D261A] text-[#F8F1E9] hover:bg-[#4A2C16]'
                 : 'bg-app-surface-muted text-app-text hover:bg-stone-200'
             }`}
           >
@@ -186,7 +186,7 @@ export function BurgerDrawer({
 
         {/* Navigation Links */}
         <div className="flex-1 overflow-y-auto px-5 py-6">
-          <p className="mb-3 text-[11px] font-semibold tracking-wider text-[#C8A77A] uppercase">
+          <p className="mb-3 text-[11px] font-semibold tracking-wider text-[#C5A47A] uppercase">
             {t('nav.menu')}
           </p>
 
@@ -199,11 +199,11 @@ export function BurgerDrawer({
               }}
               className={`flex w-full items-center gap-3.5 rounded-xl px-3.5 py-3 text-left text-sm font-medium transition-colors ${
                 isDark
-                  ? 'text-[#F4EEE8] hover:bg-[#3D261A]'
+                  ? 'text-[#F8F1E9] hover:bg-[#3D261A]'
                   : 'text-app-text hover:bg-app-surface-muted'
               }`}
             >
-              <BookOpen className="h-4 w-4 text-[#C8A77A]" />
+              <BookOpen className="h-4 w-4 text-[#C5A47A]" />
               <span>{t('nav.menu')}</span>
             </button>
 
@@ -215,11 +215,11 @@ export function BurgerDrawer({
               }}
               className={`flex w-full items-center gap-3.5 rounded-xl px-3.5 py-3 text-left text-sm font-medium transition-colors ${
                 isDark
-                  ? 'text-[#F4EEE8] hover:bg-[#3D261A]'
+                  ? 'text-[#F8F1E9] hover:bg-[#3D261A]'
                   : 'text-app-text hover:bg-app-surface-muted'
               }`}
             >
-              <LayoutGrid className="h-4 w-4 text-[#C8A77A]" />
+              <LayoutGrid className="h-4 w-4 text-[#C5A47A]" />
               <span>{t('nav.categories')}</span>
             </button>
 
@@ -229,19 +229,19 @@ export function BurgerDrawer({
               onClick={toggleTheme}
               className={`flex w-full items-center justify-between rounded-xl px-3.5 py-3 text-left text-sm font-medium transition-colors ${
                 isDark
-                  ? 'text-[#F4EEE8] hover:bg-[#3D261A]'
+                  ? 'text-[#F8F1E9] hover:bg-[#3D261A]'
                   : 'text-app-text hover:bg-app-surface-muted'
               }`}
             >
               <div className="flex items-center gap-3.5">
                 {isDark ? (
-                  <Sun className="h-4 w-4 text-[#C8A77A]" />
+                  <Sun className="h-4 w-4 text-[#C5A47A]" />
                 ) : (
                   <Moon className="h-4 w-4 text-brand-primary" />
                 )}
                 <span>{isDark ? t('nav.lightMode') : t('nav.darkMode')}</span>
               </div>
-              <span className="rounded-lg border border-[#C8A77A]/40 px-2 py-0.5 text-xs text-[#C8A77A]">
+              <span className="rounded-lg border border-[#C5A47A]/40 px-2 py-0.5 text-xs text-[#C5A47A]">
                 {isDark ? 'Dark' : 'Light'}
               </span>
             </button>
@@ -253,7 +253,7 @@ export function BurgerDrawer({
               isDark ? 'border-[#4A2C16]' : 'border-app-border'
             }`}
           >
-            <p className="mb-3 text-[11px] font-semibold tracking-wider text-[#C8A77A] uppercase">
+            <p className="mb-3 text-[11px] font-semibold tracking-wider text-[#C5A47A] uppercase">
               {t('nav.contact')}
             </p>
 
@@ -263,16 +263,16 @@ export function BurgerDrawer({
                   href={`tel:${phone.replace(/\s+/g, '')}`}
                   className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-colors ${
                     isDark
-                      ? 'bg-[#3D261A]/60 text-[#F4EEE8] hover:bg-[#3D261A]'
+                      ? 'bg-[#3D261A]/60 text-[#F8F1E9] hover:bg-[#3D261A]'
                       : 'bg-app-surface-muted text-app-text hover:bg-stone-200'
                   }`}
                 >
-                  <Phone className="h-4 w-4 shrink-0 text-[#C8A77A]" />
+                  <Phone className="h-4 w-4 shrink-0 text-[#C5A47A]" />
                   <div>
                     <span className="block font-medium">{phone}</span>
                     <span
                       className={`text-[11px] ${
-                        isDark ? 'text-[#C8B9AD]' : 'text-app-text-muted'
+                        isDark ? 'text-[#D8CBBF]' : 'text-app-text-muted'
                       }`}
                     >
                       {t('nav.phone')}
@@ -286,16 +286,16 @@ export function BurgerDrawer({
                   href={`tel:${phone2.replace(/\s+/g, '')}`}
                   className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-colors ${
                     isDark
-                      ? 'bg-[#3D261A]/60 text-[#F4EEE8] hover:bg-[#3D261A]'
+                      ? 'bg-[#3D261A]/60 text-[#F8F1E9] hover:bg-[#3D261A]'
                       : 'bg-app-surface-muted text-app-text hover:bg-stone-200'
                   }`}
                 >
-                  <Phone className="h-4 w-4 shrink-0 text-[#C8A77A]" />
+                  <Phone className="h-4 w-4 shrink-0 text-[#C5A47A]" />
                   <div>
                     <span className="block font-medium">{phone2}</span>
                     <span
                       className={`text-[11px] ${
-                        isDark ? 'text-[#C8B9AD]' : 'text-app-text-muted'
+                        isDark ? 'text-[#D8CBBF]' : 'text-app-text-muted'
                       }`}
                     >
                       {t('nav.phone')}
@@ -315,16 +315,16 @@ export function BurgerDrawer({
                   rel="noopener noreferrer"
                   className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-colors ${
                     isDark
-                      ? 'bg-[#3D261A]/60 text-[#F4EEE8] hover:bg-[#3D261A]'
+                      ? 'bg-[#3D261A]/60 text-[#F8F1E9] hover:bg-[#3D261A]'
                       : 'bg-app-surface-muted text-app-text hover:bg-stone-200'
                   }`}
                 >
-                  <InstagramIcon className="h-4 w-4 shrink-0 text-[#C8A77A]" />
+                  <InstagramIcon className="h-4 w-4 shrink-0 text-[#C5A47A]" />
                   <div>
                     <span className="block font-medium">{t('nav.instagram')}</span>
                     <span
                       className={`text-[11px] ${
-                        isDark ? 'text-[#C8B9AD]' : 'text-app-text-muted'
+                        isDark ? 'text-[#D8CBBF]' : 'text-app-text-muted'
                       }`}
                     >
                       @xutorok.restaurant
@@ -340,16 +340,16 @@ export function BurgerDrawer({
                   rel="noopener noreferrer"
                   className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-colors ${
                     isDark
-                      ? 'bg-[#3D261A]/60 text-[#F4EEE8] hover:bg-[#3D261A]'
+                      ? 'bg-[#3D261A]/60 text-[#F8F1E9] hover:bg-[#3D261A]'
                       : 'bg-app-surface-muted text-app-text hover:bg-stone-200'
                   }`}
                 >
-                  <FacebookIcon className="h-4 w-4 shrink-0 text-[#C8A77A]" />
+                  <FacebookIcon className="h-4 w-4 shrink-0 text-[#C5A47A]" />
                   <div>
                     <span className="block font-medium">{t('nav.facebook')}</span>
                     <span
                       className={`text-[11px] ${
-                        isDark ? 'text-[#C8B9AD]' : 'text-app-text-muted'
+                        isDark ? 'text-[#D8CBBF]' : 'text-app-text-muted'
                       }`}
                     >
                       Xutorok Tavern
@@ -360,12 +360,12 @@ export function BurgerDrawer({
 
               {address && (
                 <div className="flex items-start gap-3 px-3.5 py-1">
-                  <MapPin className="h-4 w-4 shrink-0 text-[#C8A77A] mt-0.5" />
+                  <MapPin className="h-4 w-4 shrink-0 text-[#C5A47A] mt-0.5" />
                   <div>
                     <span className="block font-medium">{address}</span>
                     <span
                       className={`text-[11px] ${
-                        isDark ? 'text-[#C8B9AD]' : 'text-app-text-muted'
+                        isDark ? 'text-[#D8CBBF]' : 'text-app-text-muted'
                       }`}
                     >
                       {t('nav.address')}
@@ -376,12 +376,12 @@ export function BurgerDrawer({
 
               {workingHours && (
                 <div className="flex items-start gap-3 px-3.5 py-1">
-                  <Clock className="h-4 w-4 shrink-0 text-[#C8A77A] mt-0.5" />
+                  <Clock className="h-4 w-4 shrink-0 text-[#C5A47A] mt-0.5" />
                   <div>
                     <span className="block font-medium">{workingHours}</span>
                     <span
                       className={`text-[11px] ${
-                        isDark ? 'text-[#C8B9AD]' : 'text-app-text-muted'
+                        isDark ? 'text-[#D8CBBF]' : 'text-app-text-muted'
                       }`}
                     >
                       {t('nav.workingHours')}
@@ -397,7 +397,7 @@ export function BurgerDrawer({
         <div
           className={`border-t px-5 py-4 text-xs ${
             isDark
-              ? 'border-[#4A2C16] text-[#C8B9AD]'
+              ? 'border-[#4A2C16] text-[#D8CBBF]'
               : 'border-app-border text-app-text-muted'
           }`}
         >

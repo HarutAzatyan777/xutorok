@@ -437,6 +437,6 @@ describe('Hybrid Product Cards & Grid Redesign (Tasks 1–9)', () => {
 
     // Burger button is present with accessible label
     expect(html).toContain('aria-label="Բացել մենյուն"');
-    expect(html).toContain('bg-[#2F1E14]');
+    expect(html).toContain('bg-[#302019]');
   });
 });

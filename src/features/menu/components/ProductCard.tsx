@@ -57,14 +57,14 @@ export function ProductCard({
           return (
             <span
               key={variant.id}
-              className="inline-flex items-center gap-1 rounded-lg bg-stone-100 px-1.5 py-0.5 text-[11px] font-medium text-stone-900 sm:px-2 sm:py-1 sm:text-xs"
+              className="inline-flex items-center gap-1 rounded-lg bg-[#F3E9DD] px-1.5 py-0.5 text-[11px] font-medium text-[#241B17] sm:px-2 sm:py-1 sm:text-xs"
             >
               {vLabel && (
-                <span className="text-stone-500">
+                <span className="text-[#8C776B]">
                   {vLabel}:
                 </span>
               )}
-              <span className="font-bold text-[#4A2C16]">
+              <span className="font-bold text-[#6D4029]">
                 {formatAMD(variant.price)}
               </span>
             </span>
@@ -72,7 +72,7 @@ export function ProductCard({
         })}
       </div>
     ) : (
-      <span className="text-sm font-bold text-[#4A2C16] sm:text-[15px]">
+      <span className="text-sm font-bold text-[#6D4029] sm:text-[15px]">
         {formatAMD(product.price)}
       </span>
     );
@@ -87,11 +87,11 @@ export function ProductCard({
         tabIndex={0}
         role="button"
         aria-label={`${title} — ${formatAMD(product.price)}`}
-        className={`group relative flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white text-stone-900 shadow-sm transition-colors duration-150 hover:border-brand-gold/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 motion-reduce:transition-none min-[340px]:row-span-2 ${
+        className={`group relative flex flex-col overflow-hidden rounded-2xl border border-[#EDE4D9] bg-[#FFF9F2] text-[#241B17] shadow-sm transition-colors duration-150 hover:border-[#C5A47A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A47A] motion-reduce:transition-none min-[340px]:row-span-2 ${
           !product.isAvailable ? 'opacity-70' : 'cursor-pointer'
         }`}
       >
-        <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-stone-100">
+        <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-[#F3E9DD]">
           <img
             src={validImageUrl}
             alt={title}
@@ -103,7 +103,7 @@ export function ProductCard({
 
           {!product.isAvailable && (
             <div className="absolute top-2 left-2 flex flex-wrap gap-1 sm:top-2.5 sm:left-2.5">
-              <span className="inline-flex items-center rounded-full bg-stone-900/85 px-2 py-0.5 text-[10px] font-semibold text-white sm:px-2.5 sm:text-[11px]">
+              <span className="inline-flex items-center rounded-full bg-[#241B17]/85 px-2 py-0.5 text-[10px] font-semibold text-[#F8F1E9] sm:px-2.5 sm:text-[11px]">
                 {t('menu.unavailable')}
               </span>
             </div>
@@ -113,21 +113,21 @@ export function ProductCard({
         <div className="flex flex-1 flex-col justify-between p-3 sm:p-3.5">
           <div>
             {categoryName && (
-              <p className="mb-0.5 truncate text-[10px] font-semibold tracking-wider text-stone-500 uppercase sm:text-[11px]">
+              <p className="mb-0.5 truncate text-[10px] font-semibold tracking-wider text-[#8C776B] uppercase sm:text-[11px]">
                 {categoryName}
               </p>
             )}
-            <h3 className="text-sm font-bold text-stone-900 leading-snug break-words transition-colors group-hover:text-brand-primary sm:text-[15px]">
+            <h3 className="text-sm font-bold text-[#241B17] leading-snug break-words transition-colors group-hover:text-[#6D4029] sm:text-[15px]">
               {title}
             </h3>
             {description && (
-              <p className="mt-1 line-clamp-2 text-[11px] text-stone-600 leading-relaxed sm:text-xs">
+              <p className="mt-1 line-clamp-2 text-[11px] text-[#574033] leading-relaxed sm:text-xs">
                 {description}
               </p>
             )}
           </div>
 
-          <div className="mt-2.5 flex items-end justify-between gap-2 border-t border-stone-200 pt-2.5">
+          <div className="mt-2.5 flex items-end justify-between gap-2 border-t border-[#EDE4D9] pt-2.5">
             {priceBlock}
           </div>
         </div>
@@ -144,7 +144,7 @@ export function ProductCard({
       tabIndex={0}
       role="button"
       aria-label={`${title} — ${formatAMD(product.price)}`}
-      className={`group relative row-span-1 flex min-h-[88px] flex-col justify-between rounded-2xl border border-stone-200 bg-white text-stone-900 p-3 shadow-sm transition-colors duration-150 hover:border-brand-gold/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 motion-reduce:transition-none sm:min-h-[96px] sm:p-3.5 ${
+      className={`group relative row-span-1 flex min-h-[88px] flex-col justify-between rounded-2xl border border-[#EDE4D9] bg-[#FFF9F2] text-[#241B17] p-3 shadow-sm transition-colors duration-150 hover:border-[#C5A47A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A47A] motion-reduce:transition-none sm:min-h-[96px] sm:p-3.5 ${
         !product.isAvailable ? 'opacity-70' : 'cursor-pointer'
       }`}
     >
@@ -152,7 +152,7 @@ export function ProductCard({
         {(categoryName || !product.isAvailable) && (
           <div className="mb-1 flex flex-wrap items-center justify-between gap-1">
             {categoryName ? (
-              <span className="truncate text-[10px] font-semibold tracking-wider text-stone-500 uppercase sm:text-[11px]">
+              <span className="truncate text-[10px] font-semibold tracking-wider text-[#8C776B] uppercase sm:text-[11px]">
                 {categoryName}
               </span>
             ) : (
@@ -160,7 +160,7 @@ export function ProductCard({
             )}
             <div className="flex flex-wrap items-center gap-1">
               {!product.isAvailable && (
-                <span className="inline-flex items-center rounded-full bg-stone-100 px-2 py-0.5 text-[10px] font-semibold text-stone-600">
+                <span className="inline-flex items-center rounded-full bg-[#F3E9DD] px-2 py-0.5 text-[10px] font-semibold text-[#6D4029]">
                   {t('menu.unavailable')}
                 </span>
               )}
@@ -168,18 +168,18 @@ export function ProductCard({
           </div>
         )}
 
-        <h3 className="text-sm font-bold text-stone-900 leading-snug break-words transition-colors group-hover:text-brand-primary sm:text-[15px]">
+        <h3 className="text-sm font-bold text-[#241B17] leading-snug break-words transition-colors group-hover:text-[#6D4029] sm:text-[15px]">
           {title}
         </h3>
 
         {description && (
-          <p className="mt-1 line-clamp-2 text-[11px] text-stone-600 leading-relaxed sm:text-xs">
+          <p className="mt-1 line-clamp-2 text-[11px] text-[#574033] leading-relaxed sm:text-xs">
             {description}
           </p>
         )}
       </div>
 
-      <div className="mt-2.5 flex items-end justify-between gap-2 border-t border-stone-200 pt-2">
+      <div className="mt-2.5 flex items-end justify-between gap-2 border-t border-[#EDE4D9] pt-2">
         {priceBlock}
       </div>
     </article>

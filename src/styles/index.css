@@ -6,33 +6,36 @@
    ========================================================================== */
 :root {
   /* Brand Colors — Warm Brown & Restrained Gold Accent */
-  --color-primary: #4a2c16;
-  --color-primary-hover: #60391c;
-  --color-primary-soft: #f5efe8;
+  --color-primary: #6d4029;
+  --color-primary-hover: #54311f;
+  --color-primary-soft: #f3e9dd;
   --color-secondary: #8c6239;
-  --color-accent: #b45309;
-  --color-gold-accent: #c8a77a;
+  --color-accent: #c5a47a;
+  --color-gold-accent: #c5a47a;
 
-  /* Dark Hero Palette */
-  --color-hero-bg: #2f1e14;
+  /* Surfaces & Backgrounds (Default Dark Chocolate Restaurant Vibe) */
+  --color-background: #302019;
+  --color-surface: #fff9f2;
+  --color-surface-muted: #f3e9dd;
+
+  /* Hero Section Palette */
+  --color-hero-bg: #302019;
   --color-hero-surface: #3d261a;
   --color-hero-border: #4a2c16;
-  --color-hero-text: #f4eee8;
-  --color-hero-text-muted: #c8b9ad;
-
-  /* Surfaces & Backgrounds (Default Dark Theme for authentic restaurant vibe) */
-  --color-background: #23160e;
-  --color-surface: #2f1e14;
-  --color-surface-muted: #3d261a;
+  --color-hero-text: #f8f1e9;
+  --color-hero-text-muted: #d8cbbf;
 
   /* Typography Colors */
-  --color-text: #f4eee8;
+  --color-text: #f8f1e9;
   --color-text-secondary: #d8cbbf;
   --color-text-muted: #a89a8e;
+  --color-text-dark: #241b17;
+  --color-text-brown: #6d4029;
 
   /* Borders */
   --color-border: #4a2c16;
   --color-border-strong: #60391c;
+  --color-card-border: #eae1d7;
 
   /* Status Colors */
   --color-success: #15803d;
@@ -58,17 +61,27 @@
 :root.light {
   /* Surfaces & Backgrounds for Light Mode */
   --color-background: #fbf7f2;
-  --color-surface: #ffffff;
-  --color-surface-muted: #f5efe7;
+  --color-surface: #fff9f2;
+  --color-surface-muted: #f3e9dd;
+
+  /* Hero Section Palette in Light Mode */
+  --color-hero-bg: #ffffff;
+  --color-hero-surface: #f8f1e9;
+  --color-hero-border: #eae5df;
+  --color-hero-text: #241b17;
+  --color-hero-text-muted: #6d4029;
 
   /* Typography Colors */
-  --color-text: #211b17;
+  --color-text: #241b17;
   --color-text-secondary: #575049;
   --color-text-muted: #82776d;
+  --color-text-dark: #241b17;
+  --color-text-brown: #6d4029;
 
   /* Borders */
   --color-border: #eae5df;
   --color-border-strong: #d8d0c7;
+  --color-card-border: #eae1d7;
 }
 
 @theme {

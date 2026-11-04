@@ -102,18 +102,18 @@ export function PublicMenuPage() {
       onRetrySettings={retrySettings}
       onNavigateToCategories={handleNavigateToCategories}
     >
-      {/* 1) Hero Section with Centered Large Logo and Subtitle (Dark in dark mode, Warm Light in light mode) */}
+      {/* 1) Hero Section with Centered Large Logo and Subtitle (Dark Chocolate in dark mode, Warm Light in light mode) */}
       <section
         data-testid="hero-section"
-        className={`relative border-b pt-8 pb-8 sm:pt-10 sm:pb-10 transition-colors duration-200 ${
+        className={`relative border-b pt-6 pb-6 sm:pt-8 sm:pb-8 transition-colors duration-200 ${
           isDark
-            ? 'border-[#4A2C16] bg-[#2F1E14] text-[#F4EEE8]'
+            ? 'border-[#4A2C16] bg-[#302019] text-[#F8F1E9]'
             : 'border-app-border bg-white text-app-text'
         }`}
       >
         <div className="mx-auto flex max-w-4xl flex-col items-center px-4 text-center">
           {/* Centered Large Logo loaded from Firebase settings — The ONLY logo on the page */}
-          <div className="flex items-center justify-center min-h-[90px] sm:min-h-[110px]">
+          <div className="flex items-center justify-center min-h-[80px] sm:min-h-[100px]">
             {settingsStatus === 'loading' ? (
               <div
                 data-testid="hero-branding-skeleton"
@@ -128,14 +128,14 @@ export function PublicMenuPage() {
                 src={rawLogoUrl}
                 alt={t('menu.title')}
                 onError={() => setFailedHeroLogoUrl(rawLogoUrl)}
-                className={`h-16 sm:h-20 md:h-24 w-auto max-w-[200px] sm:max-w-[240px] md:max-w-[280px] object-contain drop-shadow-md transition-all duration-300 ${
+                className={`h-auto w-[165px] sm:w-[195px] md:w-[225px] max-w-[240px] object-contain drop-shadow-md transition-all duration-300 ${
                   isDark ? 'brightness-0 invert opacity-95' : 'opacity-100'
                 }`}
               />
             ) : (
               <div
                 className={`flex h-16 w-16 items-center justify-center rounded-2xl ${
-                  isDark ? 'bg-[#3D261A] text-[#C8A77A]' : 'bg-app-surface-muted text-brand-primary'
+                  isDark ? 'bg-[#3D261A] text-[#C5A47A]' : 'bg-app-surface-muted text-brand-primary'
                 }`}
               >
                 <UtensilsCrossed className="h-9 w-9" />
@@ -146,8 +146,8 @@ export function PublicMenuPage() {
           {/* Heading & Localized Subtitle */}
           <h1
             data-testid="menu-main-heading"
-            className={`mt-3 text-2xl font-bold tracking-tight sm:text-3xl ${
-              isDark ? 'text-[#F4EEE8]' : 'text-app-text'
+            className={`mt-2 text-2xl font-bold tracking-tight sm:text-3xl ${
+              isDark ? 'text-[#F8F1E9]' : 'text-app-text'
             }`}
           >
             {t('menu.title')}
@@ -155,8 +155,8 @@ export function PublicMenuPage() {
 
           <p
             data-testid="menu-main-subtitle"
-            className={`mt-1 text-sm font-medium sm:text-base ${
-              isDark ? 'text-[#C8B9AD]' : 'text-app-text-muted'
+            className={`mt-1 text-xs sm:text-sm font-medium ${
+              isDark ? 'text-[#C5A47A]' : 'text-app-text-muted'
             }`}
           >
             {t('menu.subtitle')}
@@ -169,13 +169,13 @@ export function PublicMenuPage() {
               role="alert"
               className={`mt-4 flex flex-wrap items-center justify-center gap-2.5 rounded-xl border px-3.5 py-2 text-xs ${
                 isDark
-                  ? 'border-[#4A2C16] bg-[#3D261A] text-[#F4EEE8]'
+                  ? 'border-[#4A2C16] bg-[#3D261A] text-[#F8F1E9]'
                   : 'border-app-border bg-app-surface-muted text-app-text'
               }`}
             >
               <AlertCircle
                 className={`h-4 w-4 shrink-0 ${
-                  isDark ? 'text-[#C8A77A]' : 'text-brand-primary'
+                  isDark ? 'text-[#C5A47A]' : 'text-brand-primary'
                 }`}
               />
               <span>{settingsError || t('menu.errorDescription')}</span>
@@ -184,7 +184,7 @@ export function PublicMenuPage() {
                 onClick={retrySettings}
                 className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-semibold ${
                   isDark
-                    ? 'bg-[#C8A77A] text-[#2F1E14] hover:bg-[#d6b78d]'
+                    ? 'bg-[#C5A47A] text-[#241B17] hover:bg-[#d6b78d]'
                     : 'bg-brand-primary text-white hover:bg-brand-primary-hover'
                 }`}
               >
@@ -225,22 +225,50 @@ export function PublicMenuPage() {
 
           <div className="mx-auto max-w-6xl px-4 py-6">
             {activeProducts.length === 0 ? (
-              <div className="rounded-2xl border border-app-border bg-app-surface p-12 text-center">
-                <UtensilsCrossed className="mx-auto h-10 w-10 text-app-text-muted stroke-[1.5]" />
-                <h2 className="mt-3 text-lg font-bold text-app-text">
+              <div
+                className={`rounded-2xl border p-12 text-center ${
+                  isDark
+                    ? 'border-[#4A2C16] bg-[#3D261A]/40 text-[#F8F1E9]'
+                    : 'border-app-border bg-[#FFF9F2] text-[#241B17]'
+                }`}
+              >
+                <UtensilsCrossed
+                  className={`mx-auto h-10 w-10 stroke-[1.5] ${
+                    isDark ? 'text-[#C5A47A]' : 'text-[#6D4029]'
+                  }`}
+                />
+                <h2 className="mt-3 text-lg font-bold">
                   {t('menu.menuEmptyTitle')}
                 </h2>
-                <p className="mt-1 text-sm text-app-text-muted">
+                <p
+                  className={`mt-1 text-sm ${
+                    isDark ? 'text-[#D8CBBF]' : 'text-stone-600'
+                  }`}
+                >
                   {t('menu.menuEmptyDescription')}
                 </p>
               </div>
             ) : filteredProducts.length === 0 ? (
-              <div className="rounded-2xl border border-app-border bg-app-surface p-12 text-center">
-                <UtensilsCrossed className="mx-auto h-10 w-10 text-app-text-muted stroke-[1.5]" />
-                <h2 className="mt-3 text-lg font-bold text-app-text">
+              <div
+                className={`rounded-2xl border p-12 text-center ${
+                  isDark
+                    ? 'border-[#4A2C16] bg-[#3D261A]/40 text-[#F8F1E9]'
+                    : 'border-app-border bg-[#FFF9F2] text-[#241B17]'
+                }`}
+              >
+                <UtensilsCrossed
+                  className={`mx-auto h-10 w-10 stroke-[1.5] ${
+                    isDark ? 'text-[#C5A47A]' : 'text-[#6D4029]'
+                  }`}
+                />
+                <h2 className="mt-3 text-lg font-bold">
                   {t('menu.emptyTitle')}
                 </h2>
-                <p className="mt-1 text-sm text-app-text-muted">
+                <p
+                  className={`mt-1 text-sm ${
+                    isDark ? 'text-[#D8CBBF]' : 'text-stone-600'
+                  }`}
+                >
                   {t('menu.emptyDescription')}
                 </p>
                 <button
@@ -248,7 +276,11 @@ export function PublicMenuPage() {
                   onClick={() => {
                     setSelectedCategoryId(null);
                   }}
-                  className="mt-4 inline-flex items-center rounded-xl border border-app-border bg-app-surface px-4 py-2 text-xs font-semibold text-app-text hover:bg-app-surface-muted"
+                  className={`mt-4 inline-flex items-center rounded-xl border px-4 py-2 text-xs font-semibold transition-colors ${
+                    isDark
+                      ? 'border-[#4A2C16] bg-[#3D261A] text-[#F8F1E9] hover:bg-[#4A2C16]'
+                      : 'border-stone-200 bg-white text-[#241B17] hover:bg-stone-100'
+                  }`}
                 >
                   {t('menu.allCategories')}
                 </button>
@@ -257,20 +289,30 @@ export function PublicMenuPage() {
               <div className="space-y-10">
                 {groupedByCategory.map(({ category, items }) => (
                   <section key={category.id} aria-labelledby={`cat-heading-${category.id}`}>
-                    <div className="mb-4 flex items-baseline justify-between border-b border-app-border pb-2.5">
+                    <div
+                      className={`mb-4 flex items-baseline justify-between border-b pb-2.5 ${
+                        isDark ? 'border-[#4A2C16]' : 'border-stone-200'
+                      }`}
+                    >
                       <div className="flex items-center gap-2">
                         <span
                           aria-hidden="true"
-                          className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-gold"
+                          className="h-2 w-2 shrink-0 rounded-full bg-[#C5A47A]"
                         />
                         <h2
                           id={`cat-heading-${category.id}`}
-                          className="text-lg font-bold text-app-text sm:text-xl"
+                          className={`text-lg font-bold sm:text-xl ${
+                            isDark ? 'text-[#F8F1E9]' : 'text-[#241B17]'
+                          }`}
                         >
                           {getLocalizedText(category.name, lang)}
                         </h2>
                       </div>
-                      <span className="text-xs font-medium text-app-text-muted">
+                      <span
+                        className={`text-xs font-medium ${
+                          isDark ? 'text-[#D8CBBF]' : 'text-[#6D4029]'
+                        }`}
+                      >
                         {t('menu.itemsCount', { count: items.length })}
                       </span>
                     </div>
