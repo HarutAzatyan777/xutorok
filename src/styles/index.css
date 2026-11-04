@@ -13,19 +13,26 @@
   --color-accent: #b45309;
   --color-gold-accent: #c8a77a;
 
-  /* Surfaces & Backgrounds */
-  --color-background: #faf8f4;
-  --color-surface: #ffffff;
-  --color-surface-muted: #f3efe8;
+  /* Dark Hero Palette */
+  --color-hero-bg: #2f1e14;
+  --color-hero-surface: #3d261a;
+  --color-hero-border: #4a2c16;
+  --color-hero-text: #f4eee8;
+  --color-hero-text-muted: #c8b9ad;
+
+  /* Surfaces & Backgrounds (Default Dark Theme for authentic restaurant vibe) */
+  --color-background: #23160e;
+  --color-surface: #2f1e14;
+  --color-surface-muted: #3d261a;
 
   /* Typography Colors */
-  --color-text: #211b17;
-  --color-text-secondary: #575049;
-  --color-text-muted: #82776d;
+  --color-text: #f4eee8;
+  --color-text-secondary: #d8cbbf;
+  --color-text-muted: #a89a8e;
 
   /* Borders */
-  --color-border: #eae5df;
-  --color-border-strong: #d8d0c7;
+  --color-border: #4a2c16;
+  --color-border-strong: #60391c;
 
   /* Status Colors */
   --color-success: #15803d;
@@ -48,6 +55,22 @@
   --font-display: Georgia, "Noto Serif Armenian", Cambria, "Times New Roman", serif;
 }
 
+:root.light {
+  /* Surfaces & Backgrounds for Light Mode */
+  --color-background: #fbf7f2;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f5efe7;
+
+  /* Typography Colors */
+  --color-text: #211b17;
+  --color-text-secondary: #575049;
+  --color-text-muted: #82776d;
+
+  /* Borders */
+  --color-border: #eae5df;
+  --color-border-strong: #d8d0c7;
+}
+
 @theme {
   --color-brand-primary: var(--color-primary);
   --color-brand-primary-hover: var(--color-primary-hover);
@@ -55,6 +78,11 @@
   --color-brand-secondary: var(--color-secondary);
   --color-brand-accent: var(--color-accent);
   --color-brand-gold: var(--color-gold-accent);
+  --color-hero-bg: var(--color-hero-bg);
+  --color-hero-surface: var(--color-hero-surface);
+  --color-hero-border: var(--color-hero-border);
+  --color-hero-text: var(--color-hero-text);
+  --color-hero-text-muted: var(--color-hero-text-muted);
   --color-app-bg: var(--color-background);
   --color-app-surface: var(--color-surface);
   --color-app-surface-muted: var(--color-surface-muted);

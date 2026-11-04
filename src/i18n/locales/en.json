@@ -33,6 +33,21 @@
     "phone": "Phone",
     "hours": "Working Hours"
   },
+  "nav": {
+    "menu": "Menu",
+    "categories": "Categories",
+    "search": "Search",
+    "contact": "Contact",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "phone": "Call us",
+    "workingHours": "Working hours",
+    "address": "Address",
+    "darkMode": "Dark mode",
+    "lightMode": "Light mode"
+  },
   "languages": {
     "hy": "HY",
     "ru": "RU",

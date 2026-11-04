@@ -1,18 +1,21 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, X, AlertCircle, RefreshCw, UtensilsCrossed } from 'lucide-react';
+import { AlertCircle, RefreshCw, UtensilsCrossed } from 'lucide-react';
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { CategoryNav } from '../../features/menu/components/CategoryNav';
 import { MenuSkeleton } from '../../features/menu/components/MenuSkeleton';
 import { ProductGrid } from '../../features/menu/components/ProductGrid';
 import { ProductDetailDialog } from '../../features/menu/components/ProductDetailDialog';
 import { usePublicMenu } from '../../features/menu/hooks/usePublicMenu';
+import { useTheme } from '../../app/providers/themeContext';
 import { getLocalizedText } from '../../lib/utils/format';
 import type { Language, MenuProduct } from '../../types';
 
 export function PublicMenuPage() {
   const { i18n, t } = useTranslation();
   const lang = (i18n.language?.slice(0, 2) as Language) || 'hy';
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   const {
     profile,
@@ -27,8 +30,21 @@ export function PublicMenuPage() {
   } = usePublicMenu();
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
   const [activeProduct, setActiveProduct] = useState<MenuProduct | null>(null);
+
+  const rawLogoUrl =
+    settingsStatus === 'ready' && profile
+      ? profile.branding?.logoUrl?.trim() || ''
+      : '';
+  const [failedHeroLogoUrl, setFailedHeroLogoUrl] = useState<string | null>(null);
+  const hasValidHeroLogo = Boolean(rawLogoUrl && failedHeroLogoUrl !== rawLogoUrl);
+
+  const handleNavigateToCategories = () => {
+    const el = document.getElementById('menu-categories-nav');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   const visibleCategoryIds = useMemo(
     () => new Set(categories.map((c) => c.id)),
@@ -59,28 +75,16 @@ export function PublicMenuPage() {
   }, [categories, lang]);
 
   const filteredProducts = useMemo(() => {
-    const normalizedSearch = searchQuery.trim().toLowerCase();
     return activeProducts.filter((prod) => {
       if (selectedCategoryId && prod.categoryId !== selectedCategoryId) {
         return false;
       }
-      if (!normalizedSearch) {
-        return true;
-      }
-      const matchesName =
-        prod.name.hy.toLowerCase().includes(normalizedSearch) ||
-        prod.name.ru.toLowerCase().includes(normalizedSearch) ||
-        prod.name.en.toLowerCase().includes(normalizedSearch);
-      const matchesDesc =
-        (prod.description?.hy?.toLowerCase().includes(normalizedSearch) ?? false) ||
-        (prod.description?.ru?.toLowerCase().includes(normalizedSearch) ?? false) ||
-        (prod.description?.en?.toLowerCase().includes(normalizedSearch) ?? false);
-      return matchesName || matchesDesc;
+      return true;
     });
-  }, [activeProducts, selectedCategoryId, searchQuery]);
+  }, [activeProducts, selectedCategoryId]);
 
   const groupedByCategory = useMemo(() => {
-    if (selectedCategoryId || searchQuery.trim()) {
+    if (selectedCategoryId) {
       return null;
     }
     return categories
@@ -89,84 +93,110 @@ export function PublicMenuPage() {
         items: filteredProducts.filter((p) => p.categoryId === category.id),
       }))
       .filter((group) => group.items.length > 0);
-  }, [categories, filteredProducts, selectedCategoryId, searchQuery]);
+  }, [categories, filteredProducts, selectedCategoryId]);
 
   return (
     <PublicLayout
       profile={profile}
       settingsStatus={settingsStatus}
       onRetrySettings={retrySettings}
+      onNavigateToCategories={handleNavigateToCategories}
     >
-      {/* Main Heading & Search Section */}
-      <section className="border-b border-app-border bg-white pt-5 pb-4 sm:pt-6 sm:pb-5">
-        <div className="mx-auto max-w-6xl px-4">
-          <div className="flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <div className="flex items-center gap-2.5">
-                <span
-                  aria-hidden="true"
-                  className="h-5 w-1 shrink-0 rounded-full bg-brand-gold"
-                />
-                <h1
-                  data-testid="menu-main-heading"
-                  className="text-2xl font-bold tracking-tight text-app-text sm:text-3xl"
-                >
-                  {t('menu.title')}
-                </h1>
-              </div>
-              <p
-                data-testid="menu-main-subtitle"
-                className="mt-1 pl-3.5 text-xs text-app-text-muted sm:text-sm"
-              >
-                {t('menu.subtitle')}
-              </p>
-
-              {settingsStatus === 'error' && (
-                <div
-                  data-testid="settings-error-banner"
-                  role="alert"
-                  className="mt-2.5 flex flex-wrap items-center gap-2.5 rounded-xl border border-app-border bg-app-surface-muted px-3 py-1.5 text-xs text-app-text"
-                >
-                  <AlertCircle className="h-3.5 w-3.5 shrink-0 text-brand-primary" />
-                  <span>{settingsError || t('menu.errorDescription')}</span>
-                  <button
-                    type="button"
-                    onClick={retrySettings}
-                    className="inline-flex items-center gap-1 rounded-lg bg-brand-primary px-2.5 py-1 text-xs font-semibold text-white hover:bg-brand-primary-hover"
-                  >
-                    <RefreshCw className="h-3 w-3" />
-                    <span>{t('menu.retry')}</span>
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Search Input */}
-            <div className="relative w-full sm:max-w-xs">
-              <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-app-text-muted" />
-              <input
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={t('menu.searchPlaceholder')}
-                aria-label={t('menu.searchPlaceholder')}
-                className="w-full rounded-xl border border-app-border bg-app-bg/70 py-2.5 pr-9 pl-10 text-sm text-app-text placeholder:text-app-text-muted focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary/15"
+      {/* 1) Hero Section with Centered Large Logo and Subtitle (Dark in dark mode, Warm Light in light mode) */}
+      <section
+        data-testid="hero-section"
+        className={`relative border-b pt-8 pb-8 sm:pt-10 sm:pb-10 transition-colors duration-200 ${
+          isDark
+            ? 'border-[#4A2C16] bg-[#2F1E14] text-[#F4EEE8]'
+            : 'border-app-border bg-white text-app-text'
+        }`}
+      >
+        <div className="mx-auto flex max-w-4xl flex-col items-center px-4 text-center">
+          {/* Centered Large Logo loaded from Firebase settings — The ONLY logo on the page */}
+          <div className="flex items-center justify-center min-h-[90px] sm:min-h-[110px]">
+            {settingsStatus === 'loading' ? (
+              <div
+                data-testid="hero-branding-skeleton"
+                aria-busy="true"
+                aria-label="Loading restaurant logo"
+                className={`h-16 w-44 animate-pulse rounded-2xl sm:h-20 sm:w-56 ${
+                  isDark ? 'bg-[#3D261A]' : 'bg-stone-200/80'
+                }`}
               />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  aria-label={t('menu.clearSearch')}
-                  className="absolute top-1/2 right-2.5 -translate-y-1/2 rounded-lg p-1 text-app-text-muted hover:text-app-text"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
+            ) : hasValidHeroLogo ? (
+              <img
+                src={rawLogoUrl}
+                alt={t('menu.title')}
+                onError={() => setFailedHeroLogoUrl(rawLogoUrl)}
+                className={`h-16 sm:h-20 md:h-24 w-auto max-w-[200px] sm:max-w-[240px] md:max-w-[280px] object-contain drop-shadow-md transition-all duration-300 ${
+                  isDark ? 'brightness-0 invert opacity-95' : 'opacity-100'
+                }`}
+              />
+            ) : (
+              <div
+                className={`flex h-16 w-16 items-center justify-center rounded-2xl ${
+                  isDark ? 'bg-[#3D261A] text-[#C8A77A]' : 'bg-app-surface-muted text-brand-primary'
+                }`}
+              >
+                <UtensilsCrossed className="h-9 w-9" />
+              </div>
+            )}
           </div>
+
+          {/* Heading & Localized Subtitle */}
+          <h1
+            data-testid="menu-main-heading"
+            className={`mt-3 text-2xl font-bold tracking-tight sm:text-3xl ${
+              isDark ? 'text-[#F4EEE8]' : 'text-app-text'
+            }`}
+          >
+            {t('menu.title')}
+          </h1>
+
+          <p
+            data-testid="menu-main-subtitle"
+            className={`mt-1 text-sm font-medium sm:text-base ${
+              isDark ? 'text-[#C8B9AD]' : 'text-app-text-muted'
+            }`}
+          >
+            {t('menu.subtitle')}
+          </p>
+
+          {/* Error Banner if settings failed */}
+          {settingsStatus === 'error' && (
+            <div
+              data-testid="settings-error-banner"
+              role="alert"
+              className={`mt-4 flex flex-wrap items-center justify-center gap-2.5 rounded-xl border px-3.5 py-2 text-xs ${
+                isDark
+                  ? 'border-[#4A2C16] bg-[#3D261A] text-[#F4EEE8]'
+                  : 'border-app-border bg-app-surface-muted text-app-text'
+              }`}
+            >
+              <AlertCircle
+                className={`h-4 w-4 shrink-0 ${
+                  isDark ? 'text-[#C8A77A]' : 'text-brand-primary'
+                }`}
+              />
+              <span>{settingsError || t('menu.errorDescription')}</span>
+              <button
+                type="button"
+                onClick={retrySettings}
+                className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-semibold ${
+                  isDark
+                    ? 'bg-[#C8A77A] text-[#2F1E14] hover:bg-[#d6b78d]'
+                    : 'bg-brand-primary text-white hover:bg-brand-primary-hover'
+                }`}
+              >
+                <RefreshCw className="h-3 w-3" />
+                <span>{t('menu.retry')}</span>
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
+      {/* 2) Menu Content Area — Supports both Dark & Light Themes */}
       {loading ? (
         <MenuSkeleton />
       ) : error ? (
@@ -195,7 +225,7 @@ export function PublicMenuPage() {
 
           <div className="mx-auto max-w-6xl px-4 py-6">
             {activeProducts.length === 0 ? (
-              <div className="rounded-2xl border border-app-border bg-white p-12 text-center">
+              <div className="rounded-2xl border border-app-border bg-app-surface p-12 text-center">
                 <UtensilsCrossed className="mx-auto h-10 w-10 text-app-text-muted stroke-[1.5]" />
                 <h2 className="mt-3 text-lg font-bold text-app-text">
                   {t('menu.menuEmptyTitle')}
@@ -205,8 +235,8 @@ export function PublicMenuPage() {
                 </p>
               </div>
             ) : filteredProducts.length === 0 ? (
-              <div className="rounded-2xl border border-app-border bg-white p-12 text-center">
-                <Search className="mx-auto h-10 w-10 text-app-text-muted stroke-[1.5]" />
+              <div className="rounded-2xl border border-app-border bg-app-surface p-12 text-center">
+                <UtensilsCrossed className="mx-auto h-10 w-10 text-app-text-muted stroke-[1.5]" />
                 <h2 className="mt-3 text-lg font-bold text-app-text">
                   {t('menu.emptyTitle')}
                 </h2>
@@ -216,12 +246,11 @@ export function PublicMenuPage() {
                 <button
                   type="button"
                   onClick={() => {
-                    setSearchQuery('');
                     setSelectedCategoryId(null);
                   }}
-                  className="mt-4 inline-flex items-center rounded-xl border border-app-border bg-white px-4 py-2 text-xs font-semibold text-app-text hover:bg-app-surface-muted"
+                  className="mt-4 inline-flex items-center rounded-xl border border-app-border bg-app-surface px-4 py-2 text-xs font-semibold text-app-text hover:bg-app-surface-muted"
                 >
-                  {t('menu.clearSearch')}
+                  {t('menu.allCategories')}
                 </button>
               </div>
             ) : groupedByCategory ? (

@@ -48,11 +48,20 @@ export function createEmptyRestaurantProfile(
       secondaryColor: '#8c6239',
     },
     contact: {
-      phone: '',
-      address: { hy: '', ru: '', en: '' },
-      workingHours: { hy: '', ru: '', en: '' },
-      instagram: '',
-      facebook: '',
+      phone: '+37495108090',
+      phone2: '+37411708090',
+      address: {
+        hy: 'Երևան, Հայաստան',
+        ru: 'Ереван, Армения',
+        en: 'Yerevan, Armenia',
+      },
+      workingHours: {
+        hy: '10:00 - 24:00',
+        ru: '10:00 - 24:00',
+        en: '10:00 - 24:00',
+      },
+      instagram: 'https://www.instagram.com/xutorok.restaurant?obrf=b2thNHU2NW50MTQw',
+      facebook: 'https://www.facebook.com/share/14tHT8aMoey/?mibextid=wwXIfr',
       website: '',
     },
     menuSettings: {
@@ -96,6 +105,7 @@ function parseContactInfo(raw: unknown): RestaurantContactInfo {
   const obj = (raw as Record<string, unknown> | undefined) ?? {};
   return {
     phone: typeof obj.phone === 'string' ? obj.phone.trim() : '',
+    phone2: typeof obj.phone2 === 'string' ? obj.phone2.trim() : '',
     address: parseLocalizedMap(obj.address),
     workingHours: parseLocalizedMap(obj.workingHours),
     instagram: typeof obj.instagram === 'string' ? obj.instagram.trim() : '',

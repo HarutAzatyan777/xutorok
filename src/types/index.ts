@@ -75,6 +75,7 @@ export interface MenuCategory {
 
 export interface RestaurantContactInfo {
   phone?: string;
+  phone2?: string;
   address?: Partial<LocalizedText>;
   workingHours?: Partial<LocalizedText>;
   instagram?: string;

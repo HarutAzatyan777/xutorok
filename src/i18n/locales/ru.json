@@ -1,7 +1,7 @@
 {
   "menu": {
     "title": "Меню",
-    "subtitle": "Армянская и украинская кухня",
+    "subtitle": "Армянская и Украинская кухня",
     "allCategories": "Все блюда",
     "featured": "Рекомендуем",
     "searchPlaceholder": "Поиск блюд и напитков...",
@@ -32,6 +32,21 @@
     "address": "Адрес",
     "phone": "Телефон",
     "hours": "Часы работы"
+  },
+  "nav": {
+    "menu": "Меню",
+    "categories": "Категории",
+    "search": "Поиск",
+    "contact": "Контакты",
+    "openMenu": "Открыть меню",
+    "closeMenu": "Закрыть меню",
+    "instagram": "Инстаграм",
+    "facebook": "Фейсбук",
+    "phone": "Позвонить",
+    "workingHours": "Часы работы",
+    "address": "Адрес",
+    "darkMode": "Тёмная тема",
+    "lightMode": "Светлая тема"
   },
   "languages": {
     "hy": "HY",

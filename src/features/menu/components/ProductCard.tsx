@@ -57,10 +57,14 @@ export function ProductCard({
           return (
             <span
               key={variant.id}
-              className="inline-flex items-center gap-1 rounded-lg bg-app-bg px-1.5 py-0.5 text-[11px] font-medium text-app-text sm:px-2 sm:py-1 sm:text-xs"
+              className="inline-flex items-center gap-1 rounded-lg bg-stone-100 px-1.5 py-0.5 text-[11px] font-medium text-stone-900 sm:px-2 sm:py-1 sm:text-xs"
             >
-              {vLabel && <span className="text-app-text-muted">{vLabel}:</span>}
-              <span className="font-bold text-brand-primary">
+              {vLabel && (
+                <span className="text-stone-500">
+                  {vLabel}:
+                </span>
+              )}
+              <span className="font-bold text-[#4A2C16]">
                 {formatAMD(variant.price)}
               </span>
             </span>
@@ -68,7 +72,7 @@ export function ProductCard({
         })}
       </div>
     ) : (
-      <span className="text-sm font-bold text-brand-primary sm:text-[15px]">
+      <span className="text-sm font-bold text-[#4A2C16] sm:text-[15px]">
         {formatAMD(product.price)}
       </span>
     );
@@ -83,11 +87,11 @@ export function ProductCard({
         tabIndex={0}
         role="button"
         aria-label={`${title} — ${formatAMD(product.price)}`}
-        className={`group relative flex flex-col overflow-hidden rounded-2xl border border-app-border bg-white transition-colors duration-150 hover:border-brand-gold/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 motion-reduce:transition-none min-[340px]:row-span-2 ${
+        className={`group relative flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white text-stone-900 shadow-sm transition-colors duration-150 hover:border-brand-gold/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 motion-reduce:transition-none min-[340px]:row-span-2 ${
           !product.isAvailable ? 'opacity-70' : 'cursor-pointer'
         }`}
       >
-        <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-app-surface-muted">
+        <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-stone-100">
           <img
             src={validImageUrl}
             alt={title}
@@ -97,18 +101,11 @@ export function ProductCard({
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />
 
-          {(product.isFeatured || !product.isAvailable) && (
+          {!product.isAvailable && (
             <div className="absolute top-2 left-2 flex flex-wrap gap-1 sm:top-2.5 sm:left-2.5">
-              {product.isFeatured && (
-                <span className="inline-flex items-center rounded-full bg-brand-primary/90 px-2 py-0.5 text-[10px] font-semibold text-white sm:px-2.5 sm:text-[11px]">
-                  {t('menu.featured')}
-                </span>
-              )}
-              {!product.isAvailable && (
-                <span className="inline-flex items-center rounded-full bg-stone-900/85 px-2 py-0.5 text-[10px] font-semibold text-white sm:px-2.5 sm:text-[11px]">
-                  {t('menu.unavailable')}
-                </span>
-              )}
+              <span className="inline-flex items-center rounded-full bg-stone-900/85 px-2 py-0.5 text-[10px] font-semibold text-white sm:px-2.5 sm:text-[11px]">
+                {t('menu.unavailable')}
+              </span>
             </div>
           )}
         </div>
@@ -116,21 +113,21 @@ export function ProductCard({
         <div className="flex flex-1 flex-col justify-between p-3 sm:p-3.5">
           <div>
             {categoryName && (
-              <p className="mb-0.5 truncate text-[10px] font-semibold tracking-wider text-app-text-muted uppercase sm:text-[11px]">
+              <p className="mb-0.5 truncate text-[10px] font-semibold tracking-wider text-stone-500 uppercase sm:text-[11px]">
                 {categoryName}
               </p>
             )}
-            <h3 className="text-sm font-semibold text-app-text leading-snug break-words transition-colors group-hover:text-brand-primary sm:text-[15px]">
+            <h3 className="text-sm font-bold text-stone-900 leading-snug break-words transition-colors group-hover:text-brand-primary sm:text-[15px]">
               {title}
             </h3>
             {description && (
-              <p className="mt-1 line-clamp-2 text-[11px] text-app-text-muted leading-relaxed sm:text-xs">
+              <p className="mt-1 line-clamp-2 text-[11px] text-stone-600 leading-relaxed sm:text-xs">
                 {description}
               </p>
             )}
           </div>
 
-          <div className="mt-2.5 flex items-end justify-between gap-2 border-t border-app-border/70 pt-2.5">
+          <div className="mt-2.5 flex items-end justify-between gap-2 border-t border-stone-200 pt-2.5">
             {priceBlock}
           </div>
         </div>
@@ -147,28 +144,23 @@ export function ProductCard({
       tabIndex={0}
       role="button"
       aria-label={`${title} — ${formatAMD(product.price)}`}
-      className={`group relative row-span-1 flex min-h-[88px] flex-col justify-between rounded-2xl border border-app-border bg-white p-3 transition-colors duration-150 hover:border-brand-gold/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 motion-reduce:transition-none sm:min-h-[96px] sm:p-3.5 ${
+      className={`group relative row-span-1 flex min-h-[88px] flex-col justify-between rounded-2xl border border-stone-200 bg-white text-stone-900 p-3 shadow-sm transition-colors duration-150 hover:border-brand-gold/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 motion-reduce:transition-none sm:min-h-[96px] sm:p-3.5 ${
         !product.isAvailable ? 'opacity-70' : 'cursor-pointer'
       }`}
     >
       <div>
-        {(categoryName || product.isFeatured || !product.isAvailable) && (
+        {(categoryName || !product.isAvailable) && (
           <div className="mb-1 flex flex-wrap items-center justify-between gap-1">
             {categoryName ? (
-              <span className="truncate text-[10px] font-semibold tracking-wider text-app-text-muted uppercase sm:text-[11px]">
+              <span className="truncate text-[10px] font-semibold tracking-wider text-stone-500 uppercase sm:text-[11px]">
                 {categoryName}
               </span>
             ) : (
               <span />
             )}
             <div className="flex flex-wrap items-center gap-1">
-              {product.isFeatured && (
-                <span className="inline-flex items-center rounded-full border border-brand-gold/40 bg-brand-primary-soft px-2 py-0.5 text-[10px] font-semibold text-brand-primary">
-                  {t('menu.featured')}
-                </span>
-              )}
               {!product.isAvailable && (
-                <span className="inline-flex items-center rounded-full bg-app-surface-muted px-2 py-0.5 text-[10px] font-semibold text-app-text-muted">
+                <span className="inline-flex items-center rounded-full bg-stone-100 px-2 py-0.5 text-[10px] font-semibold text-stone-600">
                   {t('menu.unavailable')}
                 </span>
               )}
@@ -176,18 +168,18 @@ export function ProductCard({
           </div>
         )}
 
-        <h3 className="text-sm font-semibold text-app-text leading-snug break-words transition-colors group-hover:text-brand-primary sm:text-[15px]">
+        <h3 className="text-sm font-bold text-stone-900 leading-snug break-words transition-colors group-hover:text-brand-primary sm:text-[15px]">
           {title}
         </h3>
 
         {description && (
-          <p className="mt-1 line-clamp-2 text-[11px] text-app-text-muted leading-relaxed sm:text-xs">
+          <p className="mt-1 line-clamp-2 text-[11px] text-stone-600 leading-relaxed sm:text-xs">
             {description}
           </p>
         )}
       </div>
 
-      <div className="mt-2.5 flex items-end justify-between gap-2 border-t border-app-border/70 pt-2">
+      <div className="mt-2.5 flex items-end justify-between gap-2 border-t border-stone-200 pt-2">
         {priceBlock}
       </div>
     </article>

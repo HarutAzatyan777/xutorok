@@ -1,7 +1,7 @@
 {
   "menu": {
     "title": "Մենյու",
-    "subtitle": "Հայկական և ուկրաինական խոհանոց",
+    "subtitle": "Հայկական և Ուկրաինական խոհանոց",
     "allCategories": "Բոլորը",
     "featured": "Հատուկ առաջարկներ",
     "searchPlaceholder": "Որոնել ուտեստ կամ ըմպելիք...",
@@ -32,6 +32,21 @@
     "address": "Հասցե",
     "phone": "Հեռախոս",
     "hours": "Աշխատանքային ժամեր"
+  },
+  "nav": {
+    "menu": "Մենյու",
+    "categories": "Բաժիններ",
+    "search": "Որոնում",
+    "contact": "Կոնտակտներ",
+    "openMenu": "Բացել մենյուն",
+    "closeMenu": "Փակել մենյուն",
+    "instagram": "Ինստագրամ",
+    "facebook": "Ֆեյսբուք",
+    "phone": "Զանգահարել",
+    "workingHours": "Աշխատանքային ժամեր",
+    "address": "Հասցե",
+    "darkMode": "Մուգ ռեժիմ",
+    "lightMode": "Լուսավոր ռեժիմ"
   },
   "languages": {
     "hy": "HY",

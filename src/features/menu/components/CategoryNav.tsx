@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '../../../app/providers/themeContext';
 import { getLocalizedText } from '../../../lib/utils/format';
 import type { Language, MenuCategory } from '../../../types';
 
@@ -15,11 +16,18 @@ export function CategoryNav({
 }: CategoryNavProps) {
   const { i18n, t } = useTranslation();
   const lang = (i18n.language?.slice(0, 2) as Language) || 'hy';
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   return (
     <nav
+      id="menu-categories-nav"
       aria-label="Menu categories"
-      className="sticky top-[69px] z-20 border-b border-app-border bg-app-bg/95 backdrop-blur-md"
+      className={`sticky top-[69px] z-20 border-b backdrop-blur-md transition-colors duration-200 ${
+        isDark
+          ? 'border-[#4A2C16] bg-[#23160e]/95'
+          : 'border-app-border bg-[#FBF7F2]/95'
+      }`}
     >
       <div className="mx-auto max-w-6xl px-4">
         <div className="no-scrollbar flex items-center gap-2 overflow-x-auto py-3">
@@ -29,8 +37,12 @@ export function CategoryNav({
             aria-pressed={selectedCategoryId === null}
             className={`inline-flex shrink-0 items-center rounded-full px-4 py-2 text-sm font-medium transition-colors ${
               selectedCategoryId === null
-                ? 'bg-brand-primary text-white shadow-xs'
-                : 'border border-app-border bg-white text-app-text-secondary hover:border-brand-gold/70 hover:bg-app-surface-muted hover:text-app-text'
+                ? isDark
+                  ? 'bg-[#C8A77A] text-[#23160e] font-semibold shadow-xs'
+                  : 'bg-[#2F1E14] text-[#F4EEE8] shadow-xs'
+                : isDark
+                  ? 'border border-[#4A2C16] bg-[#2F1E14] text-[#D8CBBF] hover:border-[#C8A77A]/70 hover:bg-[#3D261A] hover:text-[#F4EEE8]'
+                  : 'border border-app-border bg-white text-app-text-secondary hover:border-brand-gold/70 hover:bg-[#F5EFE7] hover:text-app-text'
             }`}
           >
             <span>{t('menu.allCategories')}</span>
@@ -48,8 +60,12 @@ export function CategoryNav({
                 aria-pressed={isSelected}
                 className={`inline-flex shrink-0 items-center rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                   isSelected
-                    ? 'bg-brand-primary text-white shadow-xs'
-                    : 'border border-app-border bg-white text-app-text-secondary hover:border-brand-gold/70 hover:bg-app-surface-muted hover:text-app-text'
+                    ? isDark
+                      ? 'bg-[#C8A77A] text-[#23160e] font-semibold shadow-xs'
+                      : 'bg-[#2F1E14] text-[#F4EEE8] shadow-xs'
+                    : isDark
+                      ? 'border border-[#4A2C16] bg-[#2F1E14] text-[#D8CBBF] hover:border-[#C8A77A]/70 hover:bg-[#3D261A] hover:text-[#F4EEE8]'
+                      : 'border border-app-border bg-white text-app-text-secondary hover:border-brand-gold/70 hover:bg-[#F5EFE7] hover:text-app-text'
                 }`}
               >
                 <span>{label}</span>

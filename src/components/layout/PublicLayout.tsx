@@ -6,10 +6,13 @@ import {
   Phone,
   Clock,
   Lock,
-  UtensilsCrossed,
-  RefreshCw,
+  Menu as MenuIcon,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { LanguageSwitcher } from '../common/LanguageSwitcher';
+import { BurgerDrawer } from './BurgerDrawer';
+import { useTheme } from '../../app/providers/themeContext';
 import { getLocalizedText } from '../../lib/utils/format';
 import type {
   Language,
@@ -22,19 +25,24 @@ interface PublicLayoutProps {
   settingsStatus?: SettingsLoadStatus;
   onRetrySettings?: () => void;
   children: ReactNode;
+  onNavigateToCategories?: () => void;
+  onFocusSearch?: () => void;
 }
 
 export function PublicLayout({
   profile,
   settingsStatus = profile ? 'ready' : 'loading',
-  onRetrySettings,
   children,
+  onNavigateToCategories,
+  onFocusSearch,
 }: PublicLayoutProps) {
   const { i18n, t } = useTranslation();
   const lang = (i18n.language?.slice(0, 2) as Language) || 'hy';
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === 'dark';
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const isLoading = settingsStatus === 'loading';
-  const isError = settingsStatus === 'error';
 
   const restaurantName =
     settingsStatus === 'ready' && profile
@@ -48,13 +56,14 @@ export function PublicLayout({
     settingsStatus === 'ready' && profile
       ? getLocalizedText(profile.contact?.workingHours, lang)
       : '';
-  const rawLogoUrl =
-    settingsStatus === 'ready' && profile
-      ? profile.branding?.logoUrl?.trim() || ''
-      : '';
-
-  const [failedLogoUrl, setFailedLogoUrl] = useState<string | null>(null);
-  const hasValidLogo = Boolean(rawLogoUrl && failedLogoUrl !== rawLogoUrl);
+  const phone = profile?.contact?.phone?.trim() || '+37495108090';
+  const phone2 = profile?.contact?.phone2?.trim() || '+37411708090';
+  const instagram =
+    profile?.contact?.instagram?.trim() ||
+    'https://www.instagram.com/xutorok.restaurant?obrf=b2thNHU2NW50MTQw';
+  const facebook =
+    profile?.contact?.facebook?.trim() ||
+    'https://www.facebook.com/share/14tHT8aMoey/?mibextid=wwXIfr';
 
   // Preserve dynamic branding colors stored in Firestore Admin Settings when configured
   const dynamicThemeVars: CSSProperties = {};
@@ -79,74 +88,79 @@ export function PublicLayout({
   return (
     <div
       style={dynamicThemeVars}
-      className="flex min-h-dvh flex-col bg-app-bg text-app-text"
+      className="flex min-h-dvh flex-col bg-app-bg text-app-text transition-colors duration-200"
     >
-      {/* Top Header — fixed 69px height, displays only the official logo on the left */}
-      <header className="sticky top-0 z-30 h-[69px] border-b border-app-border bg-white/95 backdrop-blur-md">
+      {/* Top Header Bar — Single clean header with Burger on left, Theme & Lang switcher on right */}
+      <header
+        className={`sticky top-0 z-30 h-[69px] border-b backdrop-blur-md transition-colors duration-200 ${
+          isDark
+            ? 'border-[#4A2C16] bg-[#2F1E14]/95 text-[#F4EEE8]'
+            : 'border-app-border bg-white/95 text-app-text'
+        }`}
+      >
         <div className="mx-auto flex h-full max-w-6xl items-center justify-between gap-3 px-4">
-          {isLoading ? (
-            <div
-              data-testid="header-branding-skeleton"
-              aria-busy="true"
-              aria-label="Loading restaurant branding"
-              className="flex items-center"
+          {/* Left: Burger Navigation Button */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsDrawerOpen(true)}
+              aria-label={t('nav.openMenu')}
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8A77A] ${
+                isDark
+                  ? 'border-[#4A2C16] bg-[#3D261A] text-[#F4EEE8] hover:border-[#C8A77A]/60 hover:bg-[#4A2C16]'
+                  : 'border-app-border bg-white text-app-text hover:bg-app-surface-muted'
+              }`}
             >
-              <div className="h-10 w-24 shrink-0 animate-pulse rounded-xl bg-stone-200/75" />
-            </div>
-          ) : isError ? (
-            <div
-              data-testid="header-branding-error"
-              className="flex items-center gap-2.5 text-xs text-app-text-muted"
-            >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-app-surface-muted text-app-text-muted">
-                <UtensilsCrossed className="h-5 w-5" />
-              </div>
-              {onRetrySettings && (
-                <button
-                  type="button"
-                  data-testid="header-settings-retry"
-                  onClick={onRetrySettings}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-app-border bg-white px-2.5 py-1.5 text-xs font-semibold text-app-text hover:bg-app-surface-muted"
-                >
-                  <RefreshCw className="h-3.5 w-3.5" />
-                  <span>{t('menu.retry')}</span>
-                </button>
-              )}
-            </div>
-          ) : (
-            <Link
-              to="/menu"
-              data-testid="header-logo-link"
-              className="inline-flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40 rounded-lg"
-              aria-label={restaurantName || t('menu.title')}
-            >
-              {hasValidLogo ? (
-                <img
-                  src={rawLogoUrl}
-                  alt={restaurantName || t('menu.title')}
-                  className="h-10 w-auto max-w-[150px] object-contain transition-opacity duration-200"
-                  onError={() => setFailedLogoUrl(rawLogoUrl)}
-                />
-              ) : (
-                <div
-                  data-testid="header-logo-fallback"
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-app-surface-muted text-app-text-secondary"
-                >
-                  <UtensilsCrossed className="h-5 w-5" />
-                </div>
-              )}
-            </Link>
-          )}
+              <MenuIcon className="h-5 w-5" />
+            </button>
+          </div>
 
-          <LanguageSwitcher allowedLanguages={profile?.supportedLanguages} />
+          {/* Right: Theme Toggle (Dark/Light) + Language Switcher */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Dark / Light Mode Switcher */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={isDark ? t('nav.lightMode') : t('nav.darkMode')}
+              title={isDark ? t('nav.lightMode') : t('nav.darkMode')}
+              className={`inline-flex h-9 w-9 items-center justify-center rounded-xl border transition-all focus:outline-none focus:ring-2 focus:ring-[#C8A77A] ${
+                isDark
+                  ? 'border-[#4A2C16] bg-[#3D261A] text-[#C8A77A] hover:bg-[#4A2C16]'
+                  : 'border-app-border bg-white text-[#4A2C16] hover:bg-app-surface-muted'
+              }`}
+            >
+              {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
+
+            {/* Language Switcher */}
+            <LanguageSwitcher
+              variant={isDark ? 'dark' : 'light'}
+              allowedLanguages={profile?.supportedLanguages}
+            />
+          </div>
         </div>
       </header>
+
+      {/* Burger Drawer Navigation */}
+      <BurgerDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        profile={profile}
+        onNavigateToCategories={onNavigateToCategories}
+        onFocusSearch={onFocusSearch}
+      />
 
       {/* Main Content */}
       <main className="flex-1">{children}</main>
 
       {/* Footer */}
-      <footer className="mt-12 border-t border-app-border bg-white py-8 text-app-text-secondary">
+      <footer
+        className={`mt-12 border-t py-8 transition-colors duration-200 ${
+          isDark
+            ? 'border-[#4A2C16] bg-[#271810] text-[#C8B9AD]'
+            : 'border-app-border bg-white text-app-text-secondary'
+        }`}
+      >
         <div className="mx-auto max-w-6xl px-4">
           {isLoading ? (
             <div
@@ -154,11 +168,11 @@ export function PublicLayout({
               className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center"
             >
               <div className="space-y-2">
-                <div className="h-5 w-32 animate-pulse rounded bg-stone-200/80" />
-                <div className="h-3.5 w-48 animate-pulse rounded bg-stone-200/60" />
+                <div className="h-5 w-32 animate-pulse rounded bg-stone-700/50" />
+                <div className="h-3.5 w-48 animate-pulse rounded bg-stone-700/30" />
               </div>
               <div className="flex gap-4">
-                <div className="h-4 w-28 animate-pulse rounded bg-stone-200/60" />
+                <div className="h-4 w-28 animate-pulse rounded bg-stone-700/30" />
               </div>
             </div>
           ) : (
@@ -173,13 +187,22 @@ export function PublicLayout({
               </div>
 
               <div className="flex flex-wrap gap-4 text-xs text-app-text-secondary">
-                {profile?.contact?.phone && (
+                {phone && (
                   <a
-                    href={`tel:${profile.contact.phone}`}
+                    href={`tel:${phone.replace(/\s+/g, '')}`}
                     className="inline-flex items-center gap-1.5 hover:text-brand-primary"
                   >
                     <Phone className="h-3.5 w-3.5 text-brand-primary" />
-                    <span>{profile.contact.phone}</span>
+                    <span>{phone}</span>
+                  </a>
+                )}
+                {phone2 && (
+                  <a
+                    href={`tel:${phone2.replace(/\s+/g, '')}`}
+                    className="inline-flex items-center gap-1.5 hover:text-brand-primary"
+                  >
+                    <Phone className="h-3.5 w-3.5 text-brand-primary" />
+                    <span>{phone2}</span>
                   </a>
                 )}
                 {address && (
@@ -194,11 +217,35 @@ export function PublicLayout({
                     <span>{workingHours}</span>
                   </span>
                 )}
+                {instagram && (
+                  <a
+                    href={instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 hover:text-brand-primary font-medium"
+                  >
+                    <span>Instagram</span>
+                  </a>
+                )}
+                {facebook && (
+                  <a
+                    href={facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 hover:text-brand-primary font-medium"
+                  >
+                    <span>Facebook</span>
+                  </a>
+                )}
               </div>
             </div>
           )}
 
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-app-border/70 pt-4 text-xs text-app-text-muted">
+          <div
+            className={`mt-6 flex flex-wrap items-center justify-between gap-4 border-t pt-4 text-xs text-app-text-muted ${
+              isDark ? 'border-[#4A2C16]' : 'border-app-border/70'
+            }`}
+          >
             <span>
               © {new Date().getFullYear()}{' '}
               {restaurantName ? `${restaurantName}. ` : ''}

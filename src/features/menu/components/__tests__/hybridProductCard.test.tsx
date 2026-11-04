@@ -361,7 +361,7 @@ describe('Hybrid Product Cards & Grid Redesign (Tasks 1–9)', () => {
     expect(dialogWithImgHtml).toContain('https://example.com/khorovats.jpg');
   });
 
-  it('15. Simplifies header to logo-only, preserves dynamic Firestore branding colors, and localizes menu heading/subtitle across HY/RU/EN', () => {
+  it('15. Preserves dynamic Firestore branding colors and localizes menu heading/subtitle across HY/RU/EN', () => {
     const html = renderToStaticMarkup(
       <MemoryRouter>
         <PublicLayout
@@ -388,13 +388,9 @@ describe('Hybrid Product Cards & Grid Redesign (Tasks 1–9)', () => {
       </MemoryRouter>
     );
 
-    // Header link contains only the logo image, not a separate restaurant name text span
+    // Header has burger menu and language selector, single logo is rendered in the hero
     const headerMatch = html.match(/<header[\s\S]*?<\/header>/);
     expect(headerMatch).not.toBeNull();
-    expect(headerMatch![0]).toContain(
-      'https://firebasestorage.googleapis.com/v0/b/ai-twin-conflicts/o/logo.svg'
-    );
-    expect(headerMatch![0]).not.toContain('>Խուտոռոկ<');
     expect(headerMatch![0]).toContain('Language selector');
 
     // Dynamic Firestore branding CSS custom properties are preserved
@@ -404,14 +400,43 @@ describe('Hybrid Product Cards & Grid Redesign (Tasks 1–9)', () => {
     // Localized Menu heading & cuisine description in HY / RU / EN
     setAppLanguage('hy');
     expect(i18n.t('menu.title')).toBe('Մենյու');
-    expect(i18n.t('menu.subtitle')).toBe('Հայկական և ուկրաինական խոհանոց');
+    expect(i18n.t('menu.subtitle')).toBe('Հայկական և Ուկրաինական խոհանոց');
 
     setAppLanguage('ru');
     expect(i18n.t('menu.title')).toBe('Меню');
-    expect(i18n.t('menu.subtitle')).toBe('Армянская и украинская кухня');
+    expect(i18n.t('menu.subtitle')).toBe('Армянская и Украинская кухня');
 
     setAppLanguage('en');
     expect(i18n.t('menu.title')).toBe('Menu');
     expect(i18n.t('menu.subtitle')).toBe('Armenian and Ukrainian cuisine');
+  });
+
+  it('16. Renders burger navigation button and accessible drawer in public layout', () => {
+    const html = renderToStaticMarkup(
+      <MemoryRouter>
+        <PublicLayout
+          settingsStatus="ready"
+          profile={{
+            id: 'xutorok',
+            restaurantId: 'xutorok',
+            slug: 'xutorok',
+            status: 'active',
+            currency: 'AMD',
+            name: { hy: 'Խուտոռոկ', ru: 'Хуторок', en: 'Xutorok' },
+            defaultLanguage: 'hy',
+            supportedLanguages: ['hy', 'ru', 'en'],
+            branding: {
+              logoUrl: 'https://example.com/logo.svg',
+            },
+          }}
+        >
+          <div>Main menu content</div>
+        </PublicLayout>
+      </MemoryRouter>
+    );
+
+    // Burger button is present with accessible label
+    expect(html).toContain('aria-label="Բացել մենյուն"');
+    expect(html).toContain('bg-[#2F1E14]');
   });
 });
