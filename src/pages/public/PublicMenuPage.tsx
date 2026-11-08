@@ -7,6 +7,7 @@ import { MenuSkeleton } from '../../features/menu/components/MenuSkeleton';
 import { ProductGrid } from '../../features/menu/components/ProductGrid';
 import { ProductDetailDialog } from '../../features/menu/components/ProductDetailDialog';
 import { usePublicMenu } from '../../features/menu/hooks/usePublicMenu';
+import { useScrollHeroLogo } from '../../features/menu/hooks/useScrollHeroLogo';
 import { useTheme } from '../../app/providers/themeContext';
 import { getLocalizedText } from '../../lib/utils/format';
 import type { Language, MenuProduct } from '../../types';
@@ -38,6 +39,16 @@ export function PublicMenuPage() {
       : '';
   const [failedHeroLogoUrl, setFailedHeroLogoUrl] = useState<string | null>(null);
   const hasValidHeroLogo = Boolean(rawLogoUrl && failedHeroLogoUrl !== rawLogoUrl);
+
+  const {
+    heroAnchorRef,
+    animatedLogoRef,
+    logoImgRef,
+    handleLogoLoad,
+  } = useScrollHeroLogo({
+    enabled: settingsStatus !== 'loading',
+    logoKey: hasValidHeroLogo ? rawLogoUrl : 'fallback-icon',
+  });
 
   const handleNavigateToCategories = () => {
     const el = document.getElementById('menu-categories-nav');
@@ -112,8 +123,12 @@ export function PublicMenuPage() {
         }`}
       >
         <div className="mx-auto flex max-w-4xl flex-col items-center px-4 text-center">
-          {/* Centered Large Logo loaded from Firebase settings — The ONLY logo on the page */}
-          <div className="flex items-center justify-center min-h-[80px] sm:min-h-[100px]">
+          {/* Centered Large Logo loaded from Firebase settings — The ONLY logo on the page, smoothly animates into the sticky header on scroll */}
+          <div
+            ref={heroAnchorRef}
+            data-testid="hero-logo-anchor"
+            className="relative flex items-center justify-center min-h-[80px] sm:min-h-[100px]"
+          >
             {settingsStatus === 'loading' ? (
               <div
                 data-testid="hero-branding-skeleton"
@@ -124,17 +139,31 @@ export function PublicMenuPage() {
                 }`}
               />
             ) : hasValidHeroLogo ? (
-              <img
-                src={rawLogoUrl}
-                alt={t('menu.title')}
-                onError={() => setFailedHeroLogoUrl(rawLogoUrl)}
-                className={`h-auto w-[165px] sm:w-[195px] md:w-[225px] max-w-[240px] object-contain drop-shadow-md transition-all duration-300 ${
-                  isDark ? 'brightness-0 invert opacity-95' : 'opacity-100'
-                }`}
-              />
+              <div
+                ref={animatedLogoRef}
+                data-testid="animated-brand-logo"
+                data-docked="false"
+                data-scroll-state="hero"
+                className="z-40 pointer-events-none flex items-center justify-center origin-center will-change-transform"
+              >
+                <img
+                  ref={logoImgRef}
+                  src={rawLogoUrl}
+                  alt={t('menu.title')}
+                  onLoad={handleLogoLoad}
+                  onError={() => setFailedHeroLogoUrl(rawLogoUrl)}
+                  className={`h-auto max-h-[96px] sm:max-h-[112px] w-[165px] sm:w-[195px] md:w-[225px] max-w-[240px] object-contain select-none drop-shadow-md ${
+                    isDark ? 'brightness-0 invert opacity-95' : 'opacity-100'
+                  }`}
+                />
+              </div>
             ) : (
               <div
-                className={`flex h-16 w-16 items-center justify-center rounded-2xl ${
+                ref={animatedLogoRef}
+                data-testid="animated-brand-logo"
+                data-docked="false"
+                data-scroll-state="hero"
+                className={`z-40 pointer-events-none flex h-16 w-16 items-center justify-center rounded-2xl origin-center will-change-transform ${
                   isDark ? 'bg-[#3D261A] text-[#C5A47A]' : 'bg-app-surface-muted text-brand-primary'
                 }`}
               >

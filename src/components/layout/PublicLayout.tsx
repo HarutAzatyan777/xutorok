@@ -90,15 +90,16 @@ export function PublicLayout({
     >
       {/* Top Header Bar — Clean header with Burger on left, Lang switcher on right (~56-64px) */}
       <header
+        data-testid="public-header"
         className={`sticky top-0 z-30 h-14 sm:h-16 border-b backdrop-blur-md transition-colors duration-200 ${
           isDark
             ? 'border-[#4A2C16] bg-[#302019]/95 text-[#F8F1E9]'
             : 'border-app-border bg-[#FBF7F2]/95 text-app-text'
         }`}
       >
-        <div className="mx-auto flex h-full max-w-6xl items-center justify-between gap-3 px-4">
+        <div className="relative mx-auto flex h-full max-w-6xl items-center justify-between gap-3 px-4">
           {/* Left: Burger Navigation Button */}
-          <div className="flex items-center gap-2">
+          <div data-header-left className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setIsDrawerOpen(true)}
@@ -113,8 +114,16 @@ export function PublicLayout({
             </button>
           </div>
 
+          {/* Center: Reserved target slot for scroll-animated hero logo (34px mobile / 40px desktop max height) */}
+          <div
+            data-header-logo-slot
+            data-testid="header-logo-slot"
+            aria-hidden="true"
+            className="pointer-events-none flex h-[34px] sm:h-[40px] flex-1 items-center justify-center"
+          />
+
           {/* Right: Language Switcher */}
-          <div className="flex items-center gap-2 sm:gap-2.5">
+          <div data-header-right className="flex items-center gap-2 sm:gap-2.5">
             <LanguageSwitcher
               variant={isDark ? 'dark' : 'light'}
               allowedLanguages={profile?.supportedLanguages}

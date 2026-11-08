@@ -5,6 +5,13 @@ import { PublicLayout } from '../../../../components/layout/PublicLayout';
 import { ProductCard } from '../ProductCard';
 import { ProductGrid } from '../ProductGrid';
 import { ProductDetailDialog } from '../ProductDetailDialog';
+import {
+  computeScrollLogoMetrics,
+  computeScrollLogoTransformState,
+  DESKTOP_MAX_HEADER_LOGO_HEIGHT,
+  MIN_HEADER_VERTICAL_CLEARANCE,
+  MOBILE_MAX_HEADER_LOGO_HEIGHT,
+} from '../../hooks/useScrollHeroLogo';
 import { hasValidProductImage, normalizeProductImageUrl } from '../../utils/productImage';
 import { formatAMD } from '../../../../lib/utils/format';
 import i18n, { setAppLanguage } from '../../../../i18n';
@@ -438,5 +445,126 @@ describe('Hybrid Product Cards & Grid Redesign (Tasks 1–9)', () => {
     // Burger button is present with accessible label
     expect(html).toContain('aria-label="Բացել մենյուն"');
     expect(html).toContain('bg-[#302019]');
+  });
+
+  it('17. Computes mobile and desktop scroll-driven logo animation into the sticky header with exact clearance and aspect ratio', () => {
+    // Mobile viewport (375px wide, 56px header, 165x73.77 hero logo)
+    const mobileMetrics = computeScrollLogoMetrics({
+      viewportWidth: 375,
+      scrollY: 0,
+      baseWidth: 165,
+      baseHeight: 73.77,
+      anchorRect: {
+        left: 105,
+        top: 80,
+        width: 165,
+        height: 80,
+      },
+      headerHeight: 56,
+      leftControlRight: 56,
+      rightControlLeft: 247,
+    });
+
+    expect(mobileMetrics.finalHeight).toBeLessThanOrEqual(MOBILE_MAX_HEADER_LOGO_HEIGHT);
+    expect(mobileMetrics.finalHeight).toBeCloseTo(34, 1);
+    expect(mobileMetrics.verticalClearance).toBeGreaterThanOrEqual(
+      MIN_HEADER_VERTICAL_CLEARANCE
+    );
+    expect(mobileMetrics.targetCenterX).toBe(187.5);
+    expect(mobileMetrics.targetCenterY).toBe(28);
+    // Preserves aspect ratio
+    expect(mobileMetrics.finalWidth / mobileMetrics.finalHeight).toBeCloseTo(
+      165 / 73.77,
+      3
+    );
+    // Does not overlap left burger button (56px) or right language switcher (247px)
+    const mobileLeftEdge = mobileMetrics.targetCenterX - mobileMetrics.finalWidth / 2;
+    const mobileRightEdge = mobileMetrics.targetCenterX + mobileMetrics.finalWidth / 2;
+    expect(mobileLeftEdge).toBeGreaterThan(56);
+    expect(mobileRightEdge).toBeLessThan(247);
+
+    // At top of page (scrollY = 0)
+    const mobileTopState = computeScrollLogoTransformState(0, mobileMetrics, false);
+    expect(mobileTopState.isAtTop).toBe(true);
+    expect(mobileTopState.isDocked).toBe(false);
+    expect(mobileTopState.scale).toBe(1);
+
+    // Halfway through hero scroll
+    const mobileMidState = computeScrollLogoTransformState(
+      mobileMetrics.scrollDistance / 2,
+      mobileMetrics,
+      false
+    );
+    expect(mobileMidState.isAtTop).toBe(false);
+    expect(mobileMidState.isDocked).toBe(false);
+    expect(mobileMidState.scale).toBeGreaterThan(mobileMetrics.targetScale);
+    expect(mobileMidState.scale).toBeLessThan(1);
+
+    // Docked inside sticky header (scrollY >= scrollDistance)
+    const mobileDockedState = computeScrollLogoTransformState(
+      mobileMetrics.scrollDistance + 250,
+      mobileMetrics,
+      false
+    );
+    expect(mobileDockedState.isDocked).toBe(true);
+    expect(mobileDockedState.visualHeight).toBeCloseTo(34, 1);
+    expect(mobileDockedState.centerX).toBe(187.5);
+    expect(mobileDockedState.centerY).toBe(28);
+
+    // Desktop viewport (1280px wide, 64px header, 225x100.59 hero logo)
+    const desktopMetrics = computeScrollLogoMetrics({
+      viewportWidth: 1280,
+      scrollY: 0,
+      baseWidth: 225,
+      baseHeight: 100.59,
+      anchorRect: {
+        left: 527.5,
+        top: 96,
+        width: 225,
+        height: 100.59,
+      },
+      headerHeight: 64,
+      leftControlRight: 112,
+      rightControlLeft: 1100,
+    });
+
+    expect(desktopMetrics.finalHeight).toBeLessThanOrEqual(DESKTOP_MAX_HEADER_LOGO_HEIGHT);
+    expect(desktopMetrics.finalHeight).toBeCloseTo(40, 1);
+    expect(desktopMetrics.verticalClearance).toBeGreaterThanOrEqual(
+      MIN_HEADER_VERTICAL_CLEARANCE
+    );
+    expect(desktopMetrics.targetCenterX).toBe(640);
+    expect(desktopMetrics.targetCenterY).toBe(32);
+    expect(desktopMetrics.finalWidth / desktopMetrics.finalHeight).toBeCloseTo(
+      225 / 100.59,
+      3
+    );
+
+    const desktopDockedState = computeScrollLogoTransformState(
+      desktopMetrics.scrollDistance + 500,
+      desktopMetrics,
+      false
+    );
+    expect(desktopDockedState.isDocked).toBe(true);
+    expect(desktopDockedState.visualHeight).toBeCloseTo(40, 1);
+    expect(desktopDockedState.centerX).toBe(640);
+    expect(desktopDockedState.centerY).toBe(32);
+
+    // Respects prefers-reduced-motion
+    const reducedMotionBeforeHalf = computeScrollLogoTransformState(
+      desktopMetrics.scrollDistance * 0.25,
+      desktopMetrics,
+      true
+    );
+    expect(reducedMotionBeforeHalf.progress).toBe(0);
+    expect(reducedMotionBeforeHalf.scale).toBe(1);
+
+    const reducedMotionAfterHalf = computeScrollLogoTransformState(
+      desktopMetrics.scrollDistance * 0.75,
+      desktopMetrics,
+      true
+    );
+    expect(reducedMotionAfterHalf.progress).toBe(1);
+    expect(reducedMotionAfterHalf.isDocked).toBe(true);
   });
 });
