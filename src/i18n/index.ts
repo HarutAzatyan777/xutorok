@@ -8,9 +8,9 @@ import ru from './locales/ru.json';
 
 export const LANGUAGE_STORAGE_KEY = 'xutorok_lang';
 
-function getInitialLanguage(): Language {
+export function getSavedUserLanguage(): Language | null {
   if (typeof window === 'undefined') {
-    return appConfig.defaultLanguage;
+    return null;
   }
   try {
     const saved = window.localStorage.getItem(LANGUAGE_STORAGE_KEY) as Language | null;
@@ -20,7 +20,11 @@ function getInitialLanguage(): Language {
   } catch {
     // Ignore storage access errors in private browsing
   }
-  return appConfig.defaultLanguage;
+  return null;
+}
+
+function getInitialLanguage(): Language {
+  return getSavedUserLanguage() ?? appConfig.defaultLanguage;
 }
 
 const initialLanguage = getInitialLanguage();
@@ -55,5 +59,33 @@ export function setAppLanguage(lang: Language): void {
   }
 }
 
-export default i18n;
+/**
+ * Synchronizes active language with authoritative restaurant settings from Firestore
+ * when the visitor has not explicitly stored a valid language preference.
+ */
+export function syncLanguageWithSettings(
+  defaultLanguage: Language,
+  supportedLanguages: readonly Language[]
+): void {
+  const validSupported =
+    supportedLanguages.length > 0 ? supportedLanguages : appConfig.supportedLanguages;
+  const saved = getSavedUserLanguage();
 
+  if (saved && validSupported.includes(saved)) {
+    return;
+  }
+
+  const targetLang = validSupported.includes(defaultLanguage)
+    ? defaultLanguage
+    : validSupported[0] ?? appConfig.defaultLanguage;
+
+  const currentLang = (i18n.language?.slice(0, 2) as Language) || appConfig.defaultLanguage;
+  if (currentLang !== targetLang) {
+    void i18n.changeLanguage(targetLang);
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = targetLang;
+    }
+  }
+}
+
+export default i18n;

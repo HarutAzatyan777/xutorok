@@ -1,56 +1,42 @@
 import { useCallback, useEffect, useState } from 'react';
-import { appConfig, getRestaurantId } from '../../../config/app';
+import { getRestaurantId } from '../../../config/app';
 import { subscribeToPublicCategories } from '../../categories/services/categoryService';
 import { subscribeToPublicProducts } from '../../products/services/productService';
-import { subscribeToRestaurantProfile } from '../../settings/services/settingsService';
-import type { MenuCategory, MenuProduct, RestaurantProfile } from '../../../types';
+import { useRestaurantSettings } from '../../settings/hooks/useRestaurantSettings';
+import type {
+  MenuCategory,
+  MenuProduct,
+  RestaurantProfile,
+  SettingsLoadStatus,
+} from '../../../types';
 
 export interface PublicMenuState {
-  profile: RestaurantProfile;
-  profileLoaded: boolean;
-  profileReady: boolean;
+  profile: RestaurantProfile | null;
+  settingsStatus: SettingsLoadStatus;
+  settingsError: string | null;
   categories: MenuCategory[];
   products: MenuProduct[];
   loading: boolean;
   error: string | null;
   retry: () => void;
-}
-
-function createEmptyLoadingProfile(restaurantId: string): RestaurantProfile {
-  return {
-    id: restaurantId,
-    restaurantId,
-    name: { hy: '', ru: '', en: '' },
-    slug: restaurantId,
-    status: 'active',
-    defaultLanguage: appConfig.defaultLanguage,
-    supportedLanguages: [...appConfig.supportedLanguages],
-    currency: 'AMD',
-    branding: {
-      logoUrl: '',
-      primaryColor: '#5c3a1e',
-      secondaryColor: '#8c6239',
-    },
-    contact: {
-      phone: '',
-      address: { hy: '', ru: '', en: '' },
-      workingHours: { hy: '', en: '', ru: '' },
-    },
-  };
+  retrySettings: () => void;
 }
 
 /**
- * Connects live real-time Firestore queries (`restaurants/{restaurantId}`,
+ * Connects live real-time Firestore queries (`restaurants/{restaurantId}/settings`,
  * `restaurants/{restaurantId}/categories`, and `restaurants/{restaurantId}/products`)
  * as the single authoritative source of truth.
- * Never renders default fallback names or logos before Firestore responds.
+ * Never initializes with hardcoded branding or static product arrays.
  */
-export function usePublicMenu(): PublicMenuState {
-  const restaurantId = getRestaurantId();
-  const [profile, setProfile] = useState<RestaurantProfile>(() =>
-    createEmptyLoadingProfile(restaurantId)
-  );
-  const [profileLoaded, setProfileLoaded] = useState(false);
+export function usePublicMenu(overrideRestaurantId?: string): PublicMenuState {
+  const restaurantId = getRestaurantId(overrideRestaurantId);
+  const {
+    profile,
+    status: settingsStatus,
+    error: settingsError,
+    retry: retrySettings,
+  } = useRestaurantSettings(restaurantId);
+
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [products, setProducts] = useState<MenuProduct[]>([]);
   const [catLoaded, setCatLoaded] = useState(false);
@@ -59,28 +45,17 @@ export function usePublicMenu(): PublicMenuState {
   const [retryTick, setRetryTick] = useState(0);
 
   const retry = useCallback(() => {
-    setProfileLoaded(false);
     setCatLoaded(false);
     setProdLoaded(false);
     setError(null);
     setRetryTick((prev) => prev + 1);
-  }, []);
+    if (settingsStatus === 'error') {
+      retrySettings();
+    }
+  }, [retrySettings, settingsStatus]);
 
   useEffect(() => {
     let active = true;
-
-    const unsubProfile = subscribeToRestaurantProfile(
-      (res) => {
-        if (!active) return;
-        setProfile(res);
-        setProfileLoaded(true);
-      },
-      () => {
-        if (!active) return;
-        setProfileLoaded(true);
-      },
-      restaurantId
-    );
 
     const unsubCategories = subscribeToPublicCategories(
       (cats) => {
@@ -114,23 +89,22 @@ export function usePublicMenu(): PublicMenuState {
 
     return () => {
       active = false;
-      unsubProfile();
       unsubCategories();
       unsubProducts();
     };
   }, [restaurantId, retryTick]);
 
-  const loading = !profileLoaded || !catLoaded || !prodLoaded;
-  const profileReady = profileLoaded && !loading;
+  const loading = !catLoaded || !prodLoaded;
 
   return {
     profile,
-    profileLoaded,
-    profileReady,
+    settingsStatus,
+    settingsError,
     categories,
     products,
     loading,
     error,
     retry,
+    retrySettings,
   };
 }

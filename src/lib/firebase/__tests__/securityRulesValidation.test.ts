@@ -52,7 +52,7 @@ describe('Firestore & Storage Security Rules Static & Policy Verification', () =
       'utf-8'
     );
     const importScriptSource = fs.readFileSync(
-      path.resolve(process.cwd(), 'scripts/import-xutorok-menu.ts'),
+      path.resolve(process.cwd(), 'scripts/migrate-menu.ts'),
       'utf-8'
     );
     expect(firebaseConfigSource).not.toMatch(/AIza[0-9A-Za-z_-]{35}/);

@@ -212,10 +212,13 @@ export const restaurantProfileConverter: FirestoreDataConverter<RestaurantProfil
       typeof rawName === 'string'
         ? { hy: rawName, ru: rawName, en: rawName }
         : {
-            hy: String(rawName?.hy ?? 'Խուտոռոկ'),
-            ru: String(rawName?.ru ?? 'Хуторок'),
-            en: String(rawName?.en ?? 'Xutorok'),
+            hy: String(rawName?.hy ?? ''),
+            ru: String(rawName?.ru ?? ''),
+            en: String(rawName?.en ?? ''),
           };
+
+    const rawBranding = (raw.branding as Record<string, unknown> | undefined) ?? undefined;
+    const topLevelLogoUrl = typeof raw.logoUrl === 'string' ? raw.logoUrl : undefined;
 
     return {
       id: snapshot.id,
@@ -228,7 +231,18 @@ export const restaurantProfileConverter: FirestoreDataConverter<RestaurantProfil
         ? (raw.supportedLanguages as RestaurantProfile['supportedLanguages'])
         : ['hy', 'ru', 'en'],
       currency: 'AMD',
-      branding: raw.branding ?? undefined,
+      branding: rawBranding
+        ? {
+            logoUrl: String(rawBranding.logoUrl ?? topLevelLogoUrl ?? ''),
+            logoPath: rawBranding.logoPath ? String(rawBranding.logoPath) : '',
+            primaryColor: rawBranding.primaryColor ? String(rawBranding.primaryColor) : '#5c3a1e',
+            secondaryColor: rawBranding.secondaryColor
+              ? String(rawBranding.secondaryColor)
+              : '#8c6239',
+          }
+        : topLevelLogoUrl
+          ? { logoUrl: topLevelLogoUrl, primaryColor: '#5c3a1e', secondaryColor: '#8c6239' }
+          : undefined,
       contact: raw.contact ?? undefined,
       createdAt: raw.createdAt ?? null,
       updatedAt: raw.updatedAt ?? null,

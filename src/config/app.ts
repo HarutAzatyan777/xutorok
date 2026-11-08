@@ -2,7 +2,6 @@ import type { Language } from '../types';
 
 export interface AppConfig {
   restaurantId: string;
-  defaultRestaurantName: Record<Language, string>;
   defaultLanguage: Language;
   supportedLanguages: readonly Language[];
   defaultCurrency: 'AMD';
@@ -19,11 +18,6 @@ if (!rawRestaurantId) {
 
 export const appConfig: AppConfig = {
   restaurantId: rawRestaurantId || 'xutorok',
-  defaultRestaurantName: {
-    hy: 'Խուտոռոկ',
-    ru: 'Хуторок',
-    en: 'Xutorok',
-  },
   defaultLanguage: 'hy',
   supportedLanguages: ['hy', 'ru', 'en'] as const,
   defaultCurrency: 'AMD',
@@ -36,4 +30,3 @@ export const appConfig: AppConfig = {
 export function getRestaurantId(overrideId?: string): string {
   return overrideId || appConfig.restaurantId;
 }
-

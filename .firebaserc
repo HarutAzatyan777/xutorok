@@ -6,9 +6,10 @@
     "ai-twin-conflicts": {
       "hosting": {
         "xutorok": [
-          "ai-twin-conflicts"
+          "xutorok"
         ]
       }
     }
-  }
+  },
+  "etags": {}
 }

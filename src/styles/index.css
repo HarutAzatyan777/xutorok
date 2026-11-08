@@ -1,30 +1,41 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   Centralized Visual Design Tokens (Pending Final Restaurant Branding)
-   Easily customizable per-restaurant via CSS Custom Properties
+   Centralized Visual Design Tokens
+   Customizable per-restaurant via CSS Custom Properties
    ========================================================================== */
 :root {
-  /* Brand Colors — Warm Neutral & Earthy Accent (customizable per tenant) */
-  --color-primary: #5c3a1e;
-  --color-primary-hover: #472c16;
-  --color-primary-soft: #f5efe8;
+  /* Brand Colors — Warm Brown & Restrained Gold Accent */
+  --color-primary: #6d4029;
+  --color-primary-hover: #54311f;
+  --color-primary-soft: #f3e9dd;
   --color-secondary: #8c6239;
-  --color-accent: #b45309;
+  --color-accent: #c5a47a;
+  --color-gold-accent: #c5a47a;
 
-  /* Surfaces & Backgrounds */
-  --color-background: #faf9f6;
-  --color-surface: #ffffff;
-  --color-surface-muted: #f3f1ec;
+  /* Surfaces & Backgrounds (Default Dark Chocolate Restaurant Vibe) */
+  --color-background: #302019;
+  --color-surface: #fff9f2;
+  --color-surface-muted: #f3e9dd;
+
+  /* Hero Section Palette */
+  --color-hero-bg: #302019;
+  --color-hero-surface: #3d261a;
+  --color-hero-border: #4a2c16;
+  --color-hero-text: #f8f1e9;
+  --color-hero-text-muted: #d8cbbf;
 
   /* Typography Colors */
-  --color-text: #1c1917;
-  --color-text-secondary: #57534e;
-  --color-text-muted: #78716c;
+  --color-text: #f8f1e9;
+  --color-text-secondary: #d8cbbf;
+  --color-text-muted: #a89a8e;
+  --color-text-dark: #241b17;
+  --color-text-brown: #6d4029;
 
   /* Borders */
-  --color-border: #e7e5e4;
-  --color-border-strong: #d6d3d1;
+  --color-border: #4a2c16;
+  --color-border-strong: #60391c;
+  --color-card-border: #eae1d7;
 
   /* Status Colors */
   --color-success: #15803d;
@@ -38,13 +49,39 @@
   --radius-xl: 1.25rem;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(28 25 23 / 0.05);
-  --shadow-card: 0 2px 8px -2px rgb(28 25 23 / 0.07), 0 1px 3px -1px rgb(28 25 23 / 0.05);
-  --shadow-elevated: 0 12px 24px -4px rgb(28 25 23 / 0.12), 0 4px 8px -2px rgb(28 25 23 / 0.06);
+  --shadow-sm: 0 1px 2px 0 rgb(33 27 23 / 0.04);
+  --shadow-card: 0 2px 8px -2px rgb(33 27 23 / 0.06), 0 1px 3px -1px rgb(33 27 23 / 0.04);
+  --shadow-elevated: 0 12px 24px -4px rgb(33 27 23 / 0.12), 0 4px 8px -2px rgb(33 27 23 / 0.06);
 
   /* Typography */
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Armenian", sans-serif;
   --font-display: Georgia, "Noto Serif Armenian", Cambria, "Times New Roman", serif;
+}
+
+:root.light {
+  /* Surfaces & Backgrounds for Light Mode */
+  --color-background: #fbf7f2;
+  --color-surface: #fff9f2;
+  --color-surface-muted: #f3e9dd;
+
+  /* Hero Section Palette in Light Mode */
+  --color-hero-bg: #ffffff;
+  --color-hero-surface: #f8f1e9;
+  --color-hero-border: #eae5df;
+  --color-hero-text: #241b17;
+  --color-hero-text-muted: #6d4029;
+
+  /* Typography Colors */
+  --color-text: #241b17;
+  --color-text-secondary: #575049;
+  --color-text-muted: #82776d;
+  --color-text-dark: #241b17;
+  --color-text-brown: #6d4029;
+
+  /* Borders */
+  --color-border: #eae5df;
+  --color-border-strong: #d8d0c7;
+  --color-card-border: #eae1d7;
 }
 
 @theme {
@@ -53,6 +90,12 @@
   --color-brand-primary-soft: var(--color-primary-soft);
   --color-brand-secondary: var(--color-secondary);
   --color-brand-accent: var(--color-accent);
+  --color-brand-gold: var(--color-gold-accent);
+  --color-hero-bg: var(--color-hero-bg);
+  --color-hero-surface: var(--color-hero-surface);
+  --color-hero-border: var(--color-hero-border);
+  --color-hero-text: var(--color-hero-text);
+  --color-hero-text-muted: var(--color-hero-text-muted);
   --color-app-bg: var(--color-background);
   --color-app-surface: var(--color-surface);
   --color-app-surface-muted: var(--color-surface-muted);
@@ -87,7 +130,7 @@ dialog:modal {
 dialog::backdrop {
   overflow: hidden;
   overscroll-behavior: contain;
-  background-color: rgb(28 25 23 / 0.55);
+  background-color: rgb(33 27 23 / 0.55);
   backdrop-filter: blur(2px);
 }
 
@@ -99,4 +142,3 @@ dialog::backdrop {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-
