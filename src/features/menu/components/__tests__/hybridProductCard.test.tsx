@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PublicLayout } from '../../../../components/layout/PublicLayout';
+import { LanguageSwitcher } from '../../../../components/common/LanguageSwitcher';
 import { ProductCard } from '../ProductCard';
 import { ProductGrid } from '../ProductGrid';
 import { ProductDetailDialog } from '../ProductDetailDialog';
@@ -566,5 +567,22 @@ describe('Hybrid Product Cards & Grid Redesign (Tasks 1–9)', () => {
     );
     expect(reducedMotionAfterHalf.progress).toBe(1);
     expect(reducedMotionAfterHalf.isDocked).toBe(true);
+  });
+
+  it('18. Renders flags-only language dropdown with #452B1E trigger, #FFF9F2 menu, accessible aria-labels, and zero visible text', () => {
+    setAppLanguage('hy');
+    const html = renderToStaticMarkup(<LanguageSwitcher />);
+
+    expect(html).toContain('data-testid="language-switcher-trigger"');
+    expect(html).toContain('bg-[#452B1E]');
+    expect(html).toContain('bg-[#FFF9F2]');
+    expect(html).toContain('aria-haspopup="menu"');
+    expect(html).toContain('aria-label="Հայերեն (Armenian)"');
+    expect(html).toContain('aria-label="Русский (Russian)"');
+    expect(html).toContain('aria-label="English"');
+
+    // Strip all HTML tags to verify zero visible text (no HY, RU, EN or language names)
+    const visibleText = html.replace(/<[^>]+>/g, '').trim();
+    expect(visibleText).toBe('');
   });
 });

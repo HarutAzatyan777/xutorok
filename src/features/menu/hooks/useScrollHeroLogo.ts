@@ -269,7 +269,7 @@ export function useScrollHeroLogo({
     const leftControlRight =
       leftControlEl?.getBoundingClientRect().right ?? 56;
     const rightControlLeft =
-      rightControlEl?.getBoundingClientRect().left ?? vw - 132;
+      rightControlEl?.getBoundingClientRect().left ?? vw - 80;
 
     metricsRef.current = computeScrollLogoMetrics({
       viewportWidth: vw,
