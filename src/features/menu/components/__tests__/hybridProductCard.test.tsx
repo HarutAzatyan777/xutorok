@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PublicLayout } from '../../../../components/layout/PublicLayout';
 import { LanguageSwitcher } from '../../../../components/common/LanguageSwitcher';
+import { CategoryNav } from '../CategoryNav';
 import { ProductCard } from '../ProductCard';
 import { ProductGrid } from '../ProductGrid';
 import { ProductDetailDialog } from '../ProductDetailDialog';
@@ -13,7 +14,18 @@ import {
   MIN_HEADER_VERTICAL_CLEARANCE,
   MOBILE_MAX_HEADER_LOGO_HEIGHT,
 } from '../../hooks/useScrollHeroLogo';
-import { hasValidProductImage, normalizeProductImageUrl } from '../../utils/productImage';
+import {
+  computeCategorySectionScrollTop,
+  computeHorizontalPillScrollLeft,
+  computeStickyMenuOffset,
+  resolveActiveCategoryFromSections,
+} from '../../hooks/useCategoryScrollSpy';
+import {
+  groupProductsByCategoryImageFirst,
+  hasValidProductImage,
+  normalizeProductImageUrl,
+  sortProductsImageFirst,
+} from '../../utils/productImage';
 import { formatAMD } from '../../../../lib/utils/format';
 import i18n, { setAppLanguage } from '../../../../i18n';
 import type { MenuCategory, MenuProduct } from '../../../../types';
@@ -584,5 +596,345 @@ describe('Hybrid Product Cards & Grid Redesign (Tasks 1–9)', () => {
     // Strip all HTML tags to verify zero visible text (no HY, RU, EN or language names)
     const visibleText = html.replace(/<[^>]+>/g, '').trim();
     expect(visibleText).toBe('');
+  });
+
+  it('19. Image-first ordering within a category places valid-image products first and no-image products afterward', () => {
+    const unsorted: MenuProduct[] = [
+      makeProduct({
+        id: 'no-img-1',
+        sortOrder: 1,
+        imageUrl: undefined,
+        name: { hy: 'Առանց նկար 1', ru: 'Без фото 1', en: 'No Image 1' },
+      }),
+      makeProduct({
+        id: 'with-img-2',
+        sortOrder: 3,
+        imageUrl: 'https://example.com/dish-2.webp',
+        name: { hy: 'Նկարով 2', ru: 'С фото 2', en: 'With Image 2' },
+      }),
+      makeProduct({
+        id: 'no-img-2',
+        sortOrder: 2,
+        imageUrl: '   ',
+        name: { hy: 'Առանց նկար 2', ru: 'Без фото 2', en: 'No Image 2' },
+      }),
+      makeProduct({
+        id: 'with-img-1',
+        sortOrder: 1,
+        imageUrl: 'https://example.com/dish-1.webp',
+        name: { hy: 'Նկարով 1', ru: 'С фото 1', en: 'With Image 1' },
+      }),
+    ];
+
+    const sorted = sortProductsImageFirst(unsorted);
+    expect(sorted.map((p) => p.id)).toEqual([
+      'with-img-1',
+      'with-img-2',
+      'no-img-1',
+      'no-img-2',
+    ]);
+
+    // Does not mutate input array or Firestore sortOrder values
+    expect(unsorted.map((p) => p.id)).toEqual([
+      'no-img-1',
+      'with-img-2',
+      'no-img-2',
+      'with-img-1',
+    ]);
+    expect(sorted[0].sortOrder).toBe(1);
+    expect(sorted[1].sortOrder).toBe(3);
+
+    // ProductGrid also enforces image-first ordering in rendered markup
+    const html = renderToStaticMarkup(
+      <ProductGrid products={unsorted} onSelectProduct={() => {}} />
+    );
+    const idxImg1 = html.indexOf('product-card-with-img-1');
+    const idxImg2 = html.indexOf('product-card-with-img-2');
+    const idxNoImg1 = html.indexOf('product-card-no-img-1');
+    const idxNoImg2 = html.indexOf('product-card-no-img-2');
+
+    expect(idxImg1).toBeGreaterThan(-1);
+    expect(idxImg2).toBeGreaterThan(idxImg1);
+    expect(idxNoImg1).toBeGreaterThan(idxImg2);
+    expect(idxNoImg2).toBeGreaterThan(idxNoImg1);
+  });
+
+  it('20. Stable ordering of products with the same image status preserves sortOrder and original sequence on ties', () => {
+    const items: MenuProduct[] = [
+      makeProduct({
+        id: 'no-img-a',
+        sortOrder: 5,
+        imageUrl: undefined,
+      }),
+      makeProduct({
+        id: 'no-img-b',
+        sortOrder: 5,
+        imageUrl: '',
+      }),
+      makeProduct({
+        id: 'img-a',
+        sortOrder: 2,
+        imageUrl: 'https://example.com/a.jpg',
+      }),
+      makeProduct({
+        id: 'img-b',
+        sortOrder: 2,
+        imageUrl: 'https://example.com/b.jpg',
+      }),
+      makeProduct({
+        id: 'img-c',
+        sortOrder: 1,
+        imageUrl: 'https://example.com/c.jpg',
+      }),
+    ];
+
+    const sorted = sortProductsImageFirst(items);
+    expect(sorted.map((p) => p.id)).toEqual([
+      'img-c',
+      'img-a',
+      'img-b',
+      'no-img-a',
+      'no-img-b',
+    ]);
+
+    // When an image fails at runtime, it demotes to the no-image group while preserving sortOrder
+    const sortedWithBroken = sortProductsImageFirst(items, {
+      'img-c::https://example.com/c.jpg': true,
+    });
+    expect(sortedWithBroken.map((p) => p.id)).toEqual([
+      'img-a',
+      'img-b',
+      'img-c',
+      'no-img-a',
+      'no-img-b',
+    ]);
+  });
+
+  it('21. Correct category grouping in "All Products" keeps category sections separate and sorts image-first within each category', () => {
+    const categories: MenuCategory[] = [
+      {
+        id: 'cat-soups',
+        restaurantId: 'xutorok',
+        slug: 'soups',
+        name: { hy: 'Ապուրներ', ru: 'Супы', en: 'Soups' },
+        sortOrder: 1,
+        isVisible: true,
+      },
+      {
+        id: 'cat-grill',
+        restaurantId: 'xutorok',
+        slug: 'grill',
+        name: { hy: 'Խորոված', ru: 'Шашлык', en: 'Grill' },
+        sortOrder: 2,
+        isVisible: true,
+      },
+    ];
+
+    const products: MenuProduct[] = [
+      makeProduct({
+        id: 'soup-no-img',
+        categoryId: 'cat-soups',
+        sortOrder: 1,
+        imageUrl: undefined,
+      }),
+      makeProduct({
+        id: 'grill-img',
+        categoryId: 'cat-grill',
+        sortOrder: 1,
+        imageUrl: 'https://example.com/grill.jpg',
+      }),
+      makeProduct({
+        id: 'soup-img',
+        categoryId: 'cat-soups',
+        sortOrder: 2,
+        imageUrl: 'https://example.com/borscht.jpg',
+      }),
+      makeProduct({
+        id: 'grill-no-img',
+        categoryId: 'cat-grill',
+        sortOrder: 2,
+        imageUrl: undefined,
+      }),
+    ];
+
+    const groups = groupProductsByCategoryImageFirst(categories, products);
+
+    expect(groups).toHaveLength(2);
+    expect(groups[0].category.id).toBe('cat-soups');
+    expect(groups[0].items.map((p) => p.id)).toEqual(['soup-img', 'soup-no-img']);
+    expect(groups[1].category.id).toBe('cat-grill');
+    expect(groups[1].items.map((p) => p.id)).toEqual(['grill-img', 'grill-no-img']);
+  });
+
+  it('22. Scroll Spy active category updates accurately during both downward and upward scrolling', () => {
+    const stickyOffset = 136; // 64px header + 56px category nav + 16px breathing room
+
+    // 1. At top of page above first category section -> returns null ("All Products" stays active)
+    expect(
+      resolveActiveCategoryFromSections(
+        [
+          { categoryId: 'cat-1', top: 260, bottom: 760 },
+          { categoryId: 'cat-2', top: 780, bottom: 1280 },
+          { categoryId: 'cat-3', top: 1300, bottom: 1800 },
+        ],
+        stickyOffset,
+        0
+      )
+    ).toBeNull();
+
+    // 2. Scrolled down into Category 1
+    expect(
+      resolveActiveCategoryFromSections(
+        [
+          { categoryId: 'cat-1', top: 120, bottom: 620 },
+          { categoryId: 'cat-2', top: 640, bottom: 1140 },
+          { categoryId: 'cat-3', top: 1160, bottom: 1660 },
+        ],
+        stickyOffset,
+        200
+      )
+    ).toBe('cat-1');
+
+    // 3. Scrolled further down into Category 2
+    expect(
+      resolveActiveCategoryFromSections(
+        [
+          { categoryId: 'cat-1', top: -380, bottom: 120 },
+          { categoryId: 'cat-2', top: 140, bottom: 640 },
+          { categoryId: 'cat-3', top: 660, bottom: 1160 },
+        ],
+        stickyOffset,
+        700
+      )
+    ).toBe('cat-2');
+
+    // 4. Scrolled down into Category 3
+    expect(
+      resolveActiveCategoryFromSections(
+        [
+          { categoryId: 'cat-1', top: -900, bottom: -400 },
+          { categoryId: 'cat-2', top: -380, bottom: 120 },
+          { categoryId: 'cat-3', top: 145, bottom: 645 },
+        ],
+        stickyOffset,
+        1220
+      )
+    ).toBe('cat-3');
+
+    // 5. Scrolled back UP into Category 2 -> immediately highlights Category 2 again
+    expect(
+      resolveActiveCategoryFromSections(
+        [
+          { categoryId: 'cat-1', top: -300, bottom: 200 },
+          { categoryId: 'cat-2', top: 150, bottom: 650 },
+          { categoryId: 'cat-3', top: 670, bottom: 1170 },
+        ],
+        stickyOffset,
+        620
+      )
+    ).toBe('cat-2');
+  });
+
+  it('23. Clicking category navigation and rendering CategoryNav preserves distinction between selected filter and scroll-active section', () => {
+    const categories: MenuCategory[] = [
+      {
+        id: 'cat-1',
+        restaurantId: 'xutorok',
+        slug: 'soups',
+        name: { hy: 'Ապուրներ', ru: 'Супы', en: 'Soups' },
+        sortOrder: 1,
+        isVisible: true,
+      },
+      {
+        id: 'cat-2',
+        restaurantId: 'xutorok',
+        slug: 'grill',
+        name: { hy: 'Խորոված', ru: 'Шашлык', en: 'Grill' },
+        sortOrder: 2,
+        isVisible: true,
+      },
+    ];
+
+    const onSelect = vi.fn();
+
+    // Case A: "All Products" selected (`selectedCategoryId = null`), scrolling inside `cat-2`
+    const scrollSpyHtml = renderToStaticMarkup(
+      <CategoryNav
+        categories={categories}
+        selectedCategoryId={null}
+        activeScrollCategoryId="cat-2"
+        onSelectCategory={onSelect}
+      />
+    );
+
+    // "All Products" retains `data-selected="true"` (`aria-pressed="true"`), while `cat-2` is `data-scroll-active="true"` and `data-active="true"`
+    expect(scrollSpyHtml).toContain(
+      'data-testid="category-pill-all" data-category-id="all" data-selected="true" data-active="false"'
+    );
+    expect(scrollSpyHtml).toContain(
+      'data-testid="category-pill-cat-2" data-category-id="cat-2" data-selected="false" data-scroll-active="true" data-active="true"'
+    );
+    expect(scrollSpyHtml).toContain('aria-current="location"');
+
+    // Case B: Specific category `cat-1` selected -> `cat-1` is selected & active, "All Products" is unselected and clickable to return
+    const singleCategoryHtml = renderToStaticMarkup(
+      <CategoryNav
+        categories={categories}
+        selectedCategoryId="cat-1"
+        activeScrollCategoryId={null}
+        onSelectCategory={onSelect}
+      />
+    );
+
+    expect(singleCategoryHtml).toContain(
+      'data-testid="category-pill-all" data-category-id="all" data-selected="false" data-active="false"'
+    );
+    expect(singleCategoryHtml).toContain(
+      'data-testid="category-pill-cat-1" data-category-id="cat-1" data-selected="true" data-scroll-active="false" data-active="true"'
+    );
+  });
+
+  it('24. Sticky header and category navigation offsets prevent section headings from hiding behind sticky bars', () => {
+    // Mobile: 56px header + 60px category nav + 16px breathing room = 132px
+    const mobileOffset = computeStickyMenuOffset({
+      viewportWidth: 375,
+      headerHeight: 56,
+      categoryNavHeight: 60,
+    });
+    expect(mobileOffset).toBe(132);
+
+    // Desktop: 64px header + 60px category nav + 16px breathing room = 140px
+    const desktopOffset = computeStickyMenuOffset({
+      viewportWidth: 1280,
+      headerHeight: 64,
+      categoryNavHeight: 60,
+    });
+    expect(desktopOffset).toBe(140);
+
+    // Target scroll position places section heading cleanly below sticky offset
+    const targetTop = computeCategorySectionScrollTop(420, 300, desktopOffset);
+    expect(targetTop).toBe(300 + 420 - 140);
+  });
+
+  it('25. Mobile horizontal category navigation computes centered scrollLeft to keep active pill visible', () => {
+    // Active pill near the right side of a 360px mobile category strip
+    const scrollLeft = computeHorizontalPillScrollLeft({
+      containerScrollLeft: 0,
+      containerClientWidth: 360,
+      pillOffsetLeft: 480,
+      pillOffsetWidth: 110,
+    });
+
+    // Pill center is 480 + 55 = 535; centered in 360px container -> 535 - 180 = 355
+    expect(scrollLeft).toBe(355);
+
+    // First pill ("All Products") at the left edge clamps cleanly to 0
+    const firstPillScrollLeft = computeHorizontalPillScrollLeft({
+      containerScrollLeft: 200,
+      containerClientWidth: 360,
+      pillOffsetLeft: 16,
+      pillOffsetWidth: 96,
+    });
+    expect(firstPillScrollLeft).toBe(0);
   });
 });

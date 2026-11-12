@@ -7,7 +7,21 @@ import { AdminProductsPage } from '../pages/admin/AdminProductsPage';
 import { AdminProductEditPage } from '../pages/admin/AdminProductEditPage';
 import { AdminCategoriesPage } from '../pages/admin/AdminCategoriesPage';
 import { AdminSettingsPage } from '../pages/admin/AdminSettingsPage';
+import { AdminImageReviewPage } from '../pages/admin/AdminImageReviewPage';
 import { AppRoot } from './AppRoot';
+
+const devOnlyRoutes = import.meta.env.DEV
+  ? [
+      {
+        path: 'admin/image-review',
+        element: <AdminImageReviewPage />,
+      },
+      {
+        path: 'dev/image-review',
+        element: <AdminImageReviewPage />,
+      },
+    ]
+  : [];
 
 export const appRouter = createBrowserRouter([
   {
@@ -22,6 +36,7 @@ export const appRouter = createBrowserRouter([
         path: 'menu',
         element: <PublicMenuPage />,
       },
+      ...devOnlyRoutes,
       {
         path: 'admin/login',
         element: <AdminLoginPage />,

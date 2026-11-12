@@ -1,6 +1,6 @@
 # Xutorok Digital Menu — Dry-Run Migration Audit Report
 
-- **Timestamp:** `2026-11-01T09:47:58.145Z`
+- **Timestamp:** `2026-11-12T07:23:22.101Z`
 - **Execution Mode:** `dry-run`
 - **Target Firebase Project:** `ai-twin-conflicts`
 - **Target Restaurant Tenant:** `xutorok` (`restaurants/xutorok`)
@@ -14,12 +14,12 @@
 | Source products | **297** |
 | Unique valid products | **297** |
 | Source categories | **29** |
-| Existing Firestore products | **0** |
-| Existing Firestore categories | **0** |
-| Planned category inserts | **29** |
-| Planned product inserts | **297** |
-| Existing categories (unchanged / skipped) | **0** |
-| Existing products (unchanged / skipped) | **0** |
+| Existing Firestore products | **297** |
+| Existing Firestore categories | **29** |
+| Planned category inserts | **0** |
+| Planned product inserts | **0** |
+| Existing categories (unchanged / skipped) | **29** |
+| Existing products (unchanged / skipped) | **297** |
 | Potential category updates / conflicts | **0** |
 | Potential product updates / conflicts | **0** |
 | Duplicate records | **0** (0 duplicate IDs or identical category+name tuples in source) |

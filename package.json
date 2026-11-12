@@ -13,7 +13,15 @@
     "menu:migrate:dry-run": "tsx scripts/migrate-menu.ts --dry-run",
     "menu:migrate": "tsx scripts/migrate-menu.ts --execute",
     "import:menu": "tsx scripts/migrate-menu.ts --dry-run",
-    "import:menu:execute": "tsx scripts/migrate-menu.ts --execute"
+    "import:menu:execute": "tsx scripts/migrate-menu.ts --execute",
+    "images:inventory": "tsx scripts/menu-images/inventory.ts",
+    "images:match": "tsx scripts/menu-images/matcher.ts",
+    "images:optimize": "tsx scripts/menu-images/optimize.ts",
+    "images:import:dry-run": "tsx scripts/menu-images/import-firebase.ts",
+    "images:import:execute": "tsx scripts/menu-images/import-firebase.ts --execute",
+    "images:rollback:dry-run": "tsx scripts/menu-images/rollback-firebase.ts",
+    "images:rollback:execute": "tsx scripts/menu-images/rollback-firebase.ts --execute",
+    "images:verify": "tsx scripts/menu-images/verify-and-report.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^6.0.2",
@@ -40,6 +48,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",
     "globals": "^17.13.0",
+    "sharp": "^0.35.5",
     "tsx": "^4.23.15",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.72.0",

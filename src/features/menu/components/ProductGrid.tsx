@@ -1,6 +1,6 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ProductCard } from './ProductCard';
-import { normalizeProductImageUrl } from '../utils/productImage';
+import { normalizeProductImageUrl, sortProductsImageFirst } from '../utils/productImage';
 import type { MenuProduct } from '../../../types';
 
 export interface ProductGridProps {
@@ -19,6 +19,9 @@ export interface ProductGridProps {
  * Uses `grid-flow-row-dense` paired with `min-[340px]:row-span-2` on visual image cards
  * and `row-span-1` on compact text-only cards so two compact cards naturally fit
  * alongside one image card without large blank gaps while preserving reading order.
+ *
+ * Within each rendered category/grid, products with valid images are prioritized first,
+ * followed by products without images, preserving admin-defined `sortOrder` within each group.
  */
 export function ProductGrid({
   products,
@@ -35,12 +38,17 @@ export function ProductGrid({
     });
   }, []);
 
+  const orderedProducts = useMemo(
+    () => sortProductsImageFirst(products, failedImageKeys),
+    [products, failedImageKeys]
+  );
+
   return (
     <div
       data-testid="hybrid-product-grid"
       className="grid grid-cols-1 min-[340px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 grid-flow-row-dense gap-3 sm:gap-3.5 lg:gap-4 items-stretch"
     >
-      {products.map((product) => {
+      {orderedProducts.map((product) => {
         const normalizedUrl = normalizeProductImageUrl(product.imageUrl);
         const isBroken = Boolean(
           normalizedUrl && failedImageKeys[`${product.id}::${normalizedUrl}`]
@@ -60,4 +68,5 @@ export function ProductGrid({
     </div>
   );
 }
+
 

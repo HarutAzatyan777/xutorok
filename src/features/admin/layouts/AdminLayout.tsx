@@ -10,6 +10,7 @@ import {
   LogOut,
   ShieldCheck,
   UtensilsCrossed,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { useAuth } from '../../auth/hooks/useAuth';
 import { useRestaurantSettings } from '../../settings/hooks/useRestaurantSettings';
@@ -21,6 +22,16 @@ const NAV_ITEMS = [
   { to: '/admin/products', label: 'Products', icon: Utensils, end: false },
   { to: '/admin/categories', label: 'Categories', icon: FolderKanban, end: false },
   { to: '/admin/settings', label: 'Settings', icon: Settings, end: false },
+  ...(import.meta.env.DEV
+    ? [
+        {
+          to: '/admin/image-review',
+          label: 'Photo Review (Dev)',
+          icon: ImageIcon,
+          end: false,
+        },
+      ]
+    : []),
 ];
 
 export function AdminLayout({ children }: { children: ReactNode }) {

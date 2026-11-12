@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AlertCircle, RefreshCw, UtensilsCrossed } from 'lucide-react';
+import { AlertCircle, ArrowLeft, RefreshCw, UtensilsCrossed } from 'lucide-react';
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { CategoryNav } from '../../features/menu/components/CategoryNav';
 import { MenuSkeleton } from '../../features/menu/components/MenuSkeleton';
@@ -8,6 +8,11 @@ import { ProductGrid } from '../../features/menu/components/ProductGrid';
 import { ProductDetailDialog } from '../../features/menu/components/ProductDetailDialog';
 import { usePublicMenu } from '../../features/menu/hooks/usePublicMenu';
 import { useScrollHeroLogo } from '../../features/menu/hooks/useScrollHeroLogo';
+import { useCategoryScrollSpy } from '../../features/menu/hooks/useCategoryScrollSpy';
+import {
+  groupProductsByCategoryImageFirst,
+  sortProductsImageFirst,
+} from '../../features/menu/utils/productImage';
 import { useTheme } from '../../app/providers/themeContext';
 import { getLocalizedText } from '../../lib/utils/format';
 import type { Language, MenuProduct } from '../../types';
@@ -85,26 +90,60 @@ export function PublicMenuPage() {
     return map;
   }, [categories, lang]);
 
+  // All non-empty category sections with image-first product ordering inside each category
+  const allCategorySections = useMemo(
+    () => groupProductsByCategoryImageFirst(categories, activeProducts),
+    [categories, activeProducts]
+  );
+
+  const nonEmptyCategoryIds = useMemo(
+    () => allCategorySections.map((group) => group.category.id),
+    [allCategorySections]
+  );
+
+  const {
+    activeScrollCategoryId,
+    stickyOffset,
+    scrollToCategorySection,
+  } = useCategoryScrollSpy({
+    enabled: !loading && !error && selectedCategoryId === null,
+    categoryIds: nonEmptyCategoryIds,
+  });
+
+  const handleSelectCategory = useCallback(
+    (categoryId: string | null) => {
+      setSelectedCategoryId(categoryId);
+      scrollToCategorySection(categoryId);
+    },
+    [scrollToCategorySection]
+  );
+
+  // Filtered products for single-category mode (sorted image-first while preserving sortOrder)
   const filteredProducts = useMemo(() => {
-    return activeProducts.filter((prod) => {
+    const matching = activeProducts.filter((prod) => {
       if (selectedCategoryId && prod.categoryId !== selectedCategoryId) {
         return false;
       }
       return true;
     });
+    return selectedCategoryId ? sortProductsImageFirst(matching) : matching;
   }, [activeProducts, selectedCategoryId]);
+
+  const selectedCategoryObj = useMemo(
+    () =>
+      selectedCategoryId
+        ? categories.find((cat) => cat.id === selectedCategoryId) ?? null
+        : null,
+    [categories, selectedCategoryId]
+  );
 
   const groupedByCategory = useMemo(() => {
     if (selectedCategoryId) {
       return null;
     }
-    return categories
-      .map((category) => ({
-        category,
-        items: filteredProducts.filter((p) => p.categoryId === category.id),
-      }))
-      .filter((group) => group.items.length > 0);
-  }, [categories, filteredProducts, selectedCategoryId]);
+    return allCategorySections;
+  }, [allCategorySections, selectedCategoryId]);
+
 
   return (
     <PublicLayout
@@ -249,7 +288,8 @@ export function PublicMenuPage() {
           <CategoryNav
             categories={categories}
             selectedCategoryId={selectedCategoryId}
-            onSelectCategory={setSelectedCategoryId}
+            activeScrollCategoryId={activeScrollCategoryId}
+            onSelectCategory={handleSelectCategory}
           />
 
           <div className="mx-auto max-w-6xl px-4 py-6">
@@ -303,7 +343,7 @@ export function PublicMenuPage() {
                 <button
                   type="button"
                   onClick={() => {
-                    setSelectedCategoryId(null);
+                    handleSelectCategory(null);
                   }}
                   className={`mt-4 inline-flex items-center rounded-xl border px-4 py-2 text-xs font-semibold transition-colors ${
                     isDark
@@ -315,9 +355,18 @@ export function PublicMenuPage() {
                 </button>
               </div>
             ) : groupedByCategory ? (
-              <div className="space-y-10">
+              <div className="space-y-10" data-testid="all-categories-sections">
                 {groupedByCategory.map(({ category, items }) => (
-                  <section key={category.id} aria-labelledby={`cat-heading-${category.id}`}>
+                  <section
+                    key={category.id}
+                    id={`category-section-${category.id}`}
+                    data-testid={`category-section-${category.id}`}
+                    data-category-section={category.id}
+                    tabIndex={-1}
+                    style={{ scrollMarginTop: `${stickyOffset}px` }}
+                    aria-labelledby={`cat-heading-${category.id}`}
+                    className="scroll-mt-32 sm:scroll-mt-36 focus:outline-none"
+                  >
                     <div
                       className={`mb-4 flex items-baseline justify-between border-b pb-2.5 ${
                         isDark ? 'border-[#4A2C16]' : 'border-stone-200'
@@ -354,11 +403,69 @@ export function PublicMenuPage() {
                 ))}
               </div>
             ) : (
-              <ProductGrid
-                products={filteredProducts}
-                categoriesById={categoriesById}
-                onSelectProduct={setActiveProduct}
-              />
+              <section
+                id={selectedCategoryId ? `category-section-${selectedCategoryId}` : undefined}
+                data-testid={
+                  selectedCategoryId ? `category-section-${selectedCategoryId}` : 'single-category-section'
+                }
+                data-category-section={selectedCategoryId ?? undefined}
+                tabIndex={-1}
+                style={{ scrollMarginTop: `${stickyOffset}px` }}
+                aria-labelledby={
+                  selectedCategoryId ? `cat-heading-${selectedCategoryId}` : undefined
+                }
+                className="scroll-mt-32 sm:scroll-mt-36 focus:outline-none"
+              >
+                {selectedCategoryObj && (
+                  <div
+                    className={`mb-4 flex flex-wrap items-center justify-between gap-2 border-b pb-2.5 ${
+                      isDark ? 'border-[#4A2C16]' : 'border-stone-200'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span
+                        aria-hidden="true"
+                        className="h-2 w-2 shrink-0 rounded-full bg-[#C5A47A]"
+                      />
+                      <h2
+                        id={`cat-heading-${selectedCategoryObj.id}`}
+                        className={`text-lg font-bold sm:text-xl ${
+                          isDark ? 'text-[#F8F1E9]' : 'text-[#241B17]'
+                        }`}
+                      >
+                        {getLocalizedText(selectedCategoryObj.name, lang)}
+                      </h2>
+                      <span
+                        className={`text-xs font-medium ${
+                          isDark ? 'text-[#D8CBBF]' : 'text-[#6D4029]'
+                        }`}
+                      >
+                        ({t('menu.itemsCount', { count: filteredProducts.length })})
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      data-testid="return-to-all-categories"
+                      onClick={() => handleSelectCategory(null)}
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
+                        isDark
+                          ? 'border-[#C5A47A]/40 bg-[#3D261A]/70 text-[#F8F1E9] hover:border-[#C5A47A] hover:bg-[#3D261A]'
+                          : 'border-app-border bg-[#FFF9F2] text-[#241B17] hover:border-brand-gold hover:bg-[#F5EFE7]'
+                      }`}
+                    >
+                      <ArrowLeft className="h-3.5 w-3.5 text-[#C5A47A]" />
+                      <span>{t('menu.allCategories')}</span>
+                    </button>
+                  </div>
+                )}
+
+                <ProductGrid
+                  products={filteredProducts}
+                  categoriesById={categoriesById}
+                  onSelectProduct={setActiveProduct}
+                />
+              </section>
             )}
           </div>
         </>
