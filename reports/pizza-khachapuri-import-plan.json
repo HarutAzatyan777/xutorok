@@ -1,0 +1,175 @@
+{
+  "tenantId": "xutorok",
+  "projectId": "ai-twin-conflicts",
+  "mode": "execute",
+  "sortOrderMode": "grouped",
+  "existingCategoriesCount": 29,
+  "existingProductsCount": 297,
+  "categories": [
+    {
+      "id": "cat-30-pizza",
+      "slug": "pizza",
+      "name": {
+        "hy": "Պիցցա",
+        "ru": "Пицца",
+        "en": "Pizza"
+      },
+      "sortOrder": 62,
+      "status": "create"
+    },
+    {
+      "id": "cat-31-khachapuri",
+      "slug": "khachapuri",
+      "name": {
+        "hy": "Խաչապուրի",
+        "ru": "Хачапури",
+        "en": "Khachapuri"
+      },
+      "sortOrder": 64,
+      "status": "create"
+    }
+  ],
+  "products": [
+    {
+      "id": "xutorok-item-298",
+      "categoryId": "cat-30-pizza",
+      "categorySlug": "pizza",
+      "name": {
+        "hy": "4 տեսակ պանիր",
+        "ru": "Кватро Формаджи",
+        "en": "Quattro Formaggi"
+      },
+      "price": 4500,
+      "currency": "AMD",
+      "sortOrder": 2980,
+      "sourceId": 298,
+      "status": "create"
+    },
+    {
+      "id": "xutorok-item-299",
+      "categoryId": "cat-30-pizza",
+      "categorySlug": "pizza",
+      "name": {
+        "hy": "Կարբոնարա",
+        "ru": "Карбонара",
+        "en": "Carbonara"
+      },
+      "price": 4800,
+      "currency": "AMD",
+      "sortOrder": 2990,
+      "sourceId": 299,
+      "status": "create"
+    },
+    {
+      "id": "xutorok-item-300",
+      "categoryId": "cat-30-pizza",
+      "categorySlug": "pizza",
+      "name": {
+        "hy": "Պրոշուտտո",
+        "ru": "Прошутто",
+        "en": "Prosciutto"
+      },
+      "price": 5500,
+      "currency": "AMD",
+      "sortOrder": 3000,
+      "sourceId": 300,
+      "status": "create"
+    },
+    {
+      "id": "xutorok-item-301",
+      "categoryId": "cat-30-pizza",
+      "categorySlug": "pizza",
+      "name": {
+        "hy": "Կեսար",
+        "ru": "Цезарь",
+        "en": "Caesar"
+      },
+      "price": 5000,
+      "currency": "AMD",
+      "sortOrder": 3010,
+      "sourceId": 301,
+      "status": "create"
+    },
+    {
+      "id": "xutorok-item-302",
+      "categoryId": "cat-30-pizza",
+      "categorySlug": "pizza",
+      "name": {
+        "hy": "Պեպպերոնի",
+        "ru": "Пепперони",
+        "en": "Pepperoni"
+      },
+      "price": 3400,
+      "currency": "AMD",
+      "sortOrder": 3020,
+      "sourceId": 302,
+      "status": "create"
+    },
+    {
+      "id": "xutorok-item-303",
+      "categoryId": "cat-30-pizza",
+      "categorySlug": "pizza",
+      "name": {
+        "hy": "Բանջարեղենային",
+        "ru": "Овощной",
+        "en": "Vegetable"
+      },
+      "price": 2900,
+      "currency": "AMD",
+      "sortOrder": 3030,
+      "sourceId": 303,
+      "status": "create"
+    },
+    {
+      "id": "xutorok-item-304",
+      "categoryId": "cat-30-pizza",
+      "categorySlug": "pizza",
+      "name": {
+        "hy": "Մարգարիտա",
+        "ru": "Маргарита",
+        "en": "Margherita"
+      },
+      "price": 3000,
+      "currency": "AMD",
+      "sortOrder": 3040,
+      "sourceId": 304,
+      "status": "create"
+    },
+    {
+      "id": "xutorok-item-305",
+      "categoryId": "cat-31-khachapuri",
+      "categorySlug": "khachapuri",
+      "name": {
+        "hy": "Իմերեթական",
+        "ru": "Имеретинский",
+        "en": "Imeretian"
+      },
+      "price": 3000,
+      "currency": "AMD",
+      "sortOrder": 3050,
+      "sourceId": 305,
+      "status": "create"
+    },
+    {
+      "id": "xutorok-item-306",
+      "categoryId": "cat-31-khachapuri",
+      "categorySlug": "khachapuri",
+      "name": {
+        "hy": "Աջարական",
+        "ru": "Аджарский",
+        "en": "Adjarian"
+      },
+      "price": 1500,
+      "currency": "AMD",
+      "sortOrder": 3060,
+      "sourceId": 306,
+      "status": "create"
+    }
+  ],
+  "summary": {
+    "categoriesToCreate": 2,
+    "categoriesToSkip": 0,
+    "productsToCreate": 9,
+    "productsToSkip": 0
+  }
+}

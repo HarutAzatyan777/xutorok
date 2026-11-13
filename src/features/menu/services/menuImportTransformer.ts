@@ -146,6 +146,14 @@ export const XUTOROK_CATEGORY_DICTIONARY: Record<string, CategoryMeta> = {
     slug: 'beer',
     name: { hy: 'Գարեջուր', ru: 'Пиво', en: 'Beer' },
   },
+  'Պիցցա': {
+    slug: 'pizza',
+    name: { hy: 'Պիցցա', ru: 'Пицца', en: 'Pizza' },
+  },
+  'Խաչապուրի': {
+    slug: 'khachapuri',
+    name: { hy: 'Խաչապուրի', ru: 'Хачапури', en: 'Khachapuri' },
+  },
 };
 
 function buildVariantsForDualPriceItem(
