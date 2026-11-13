@@ -1,5 +1,5 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   MapPin,
@@ -39,6 +39,10 @@ export function PublicLayout({
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const location = useLocation();
+  const isMenuPage = location.pathname === '/' || location.pathname === '/menu';
+  const logoUrl = profile?.branding?.logoUrl?.trim() || '';
 
   const isLoading = settingsStatus === 'loading';
 
@@ -114,13 +118,36 @@ export function PublicLayout({
             </button>
           </div>
 
-          {/* Center: Reserved target slot for scroll-animated hero logo (34px mobile / 40px desktop max height) */}
+          {/* Center: Reserved target slot for scroll-animated hero logo on menu page, or linked brand logo on other pages */}
           <div
             data-header-logo-slot
             data-testid="header-logo-slot"
-            aria-hidden="true"
-            className="pointer-events-none flex h-[34px] sm:h-[40px] flex-1 items-center justify-center"
-          />
+            className={`flex h-[34px] sm:h-[40px] flex-1 items-center justify-center ${
+              isMenuPage ? 'pointer-events-none' : ''
+            }`}
+          >
+            {!isMenuPage && (
+              <Link
+                to="/menu"
+                className="flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
+                aria-label={restaurantName || 'Xutorok'}
+              >
+                {logoUrl ? (
+                  <img
+                    src={logoUrl}
+                    alt={restaurantName || 'Xutorok'}
+                    className={`h-[34px] sm:h-[40px] w-auto max-w-[140px] sm:max-w-[180px] object-contain drop-shadow-xs ${
+                      isDark ? 'brightness-0 invert opacity-95' : 'opacity-95'
+                    }`}
+                  />
+                ) : (
+                  <span className="font-serif font-bold text-base sm:text-lg tracking-wider text-[#C5A47A]">
+                    {restaurantName || 'XUTOROK'}
+                  </span>
+                )}
+              </Link>
+            )}
+          </div>
 
           {/* Right: Language Switcher */}
           <div data-header-right className="flex items-center gap-2 sm:gap-2.5">

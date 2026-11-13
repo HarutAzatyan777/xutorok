@@ -420,15 +420,15 @@ describe('Hybrid Product Cards & Grid Redesign (Tasks 1–9)', () => {
     // Localized Menu heading & cuisine description in HY / RU / EN
     setAppLanguage('hy');
     expect(i18n.t('menu.title')).toBe('Մենյու');
-    expect(i18n.t('menu.subtitle')).toBe('Հայկական և Ուկրաինական խոհանոց');
+    expect(i18n.t('menu.subtitle')).toBe('Ուկրաինական և Հայկական խոհանոց');
 
     setAppLanguage('ru');
     expect(i18n.t('menu.title')).toBe('Меню');
-    expect(i18n.t('menu.subtitle')).toBe('Армянская и Украинская кухня');
+    expect(i18n.t('menu.subtitle')).toBe('Украинская и Армянская кухня');
 
     setAppLanguage('en');
     expect(i18n.t('menu.title')).toBe('Menu');
-    expect(i18n.t('menu.subtitle')).toBe('Armenian and Ukrainian cuisine');
+    expect(i18n.t('menu.subtitle')).toBe('Ukrainian and Armenian cuisine');
   });
 
   it('16. Renders burger navigation button and accessible drawer in public layout', () => {

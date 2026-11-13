@@ -26,36 +26,57 @@ To onboard a new restaurant application in the future, set `VITE_RESTAURANT_ID=<
 
 ## 2. Local Setup & Development
 
+When cloning or pulling the project on a new computer, follow these setup steps:
+
 1. **Install dependencies:**
    ```bash
    npm install
    ```
 
-2. **Environment configuration:**
-   Copy `.env.example` to `.env.local` (configured for `xutorok` locally):
+2. **Copy `.env.example` to `.env.local`:**
    ```bash
+   cp .env.example .env.local
+   ```
+
+3. **Configure Firebase environment variables:**
+   Open `.env.local` and set the required Firebase Web App credentials for the `ai-twin-conflicts` project:
+   ```env
+   # Restaurant Tenant Configuration
    VITE_RESTAURANT_ID=xutorok
-   VITE_FIREBASE_API_KEY=...
+
+   # Firebase Client Configuration (Web App: ai-twin-conflicts)
+   VITE_FIREBASE_API_KEY=AIzaSyCurKxOt2Vyc6PMRxvsOXBhxi6Z23NQ990
    VITE_FIREBASE_AUTH_DOMAIN=ai-twin-conflicts.firebaseapp.com
    VITE_FIREBASE_PROJECT_ID=ai-twin-conflicts
    VITE_FIREBASE_STORAGE_BUCKET=ai-twin-conflicts.firebasestorage.app
    VITE_FIREBASE_MESSAGING_SENDER_ID=562120240186
    VITE_FIREBASE_APP_ID=1:562120240186:web:3204dac37761415337d903
+
+   # Optional Emulator Flag (set to "true" when using local Firebase Emulators)
    VITE_USE_FIREBASE_EMULATOR=false
    ```
+   > [!IMPORTANT]
+   > Never commit `.env.local`, `.env`, or `*service-account*.json` files to Git. They are strictly excluded by `.gitignore`. Missing `.env.local` will trigger validation warnings or prevent Firebase initialization.
 
-3. **Start development server:**
+4. **Start development server:**
    ```bash
    npm run dev
    ```
 
-4. **Quality & Verification Commands:**
+5. **Quality & Verification Commands:**
    ```bash
    npm run lint          # ESLint check
    npm run build         # TypeScript strict check + Vite production bundle
    npm run test          # Run unit & data transformation tests
    npm run test:rules    # Run Firestore Emulator security rules tests (when emulator is running on :8080)
    ```
+
+### Troubleshooting
+
+- **`FirebaseError: Firebase: Error (auth/invalid-api-key)`**:
+  Indicates that `VITE_FIREBASE_API_KEY` is missing or contains an unconfigured placeholder in `.env.local`. Create `.env.local` from `.env.example` and provide the valid API key.
+- **`VITE_RESTAURANT_ID is not set in environment variables, falling back to "xutorok"`**:
+  Ensure `VITE_RESTAURANT_ID=xutorok` is specified in `.env.local`.
 
 ---
 

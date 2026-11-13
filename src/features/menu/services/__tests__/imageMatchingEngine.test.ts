@@ -109,7 +109,10 @@ describe('Xutorok Menu Photo Inventory, Matching & Optimization Verification', (
       expect(item.proposedStoragePath).toMatch(
         /^restaurants\/xutorok\/products\/xutorok-item-\d{3}\/[a-f0-9]{12}\.webp$/
       );
-      expect(fs.existsSync(item.optimizedAbsolutePath)).toBe(true);
+      const localOptimizedPath = fs.existsSync(item.optimizedAbsolutePath)
+        ? item.optimizedAbsolutePath
+        : path.join(reportsDir, 'optimized', item.optimizedFilename);
+      expect(fs.existsSync(localOptimizedPath)).toBe(true);
     }
   });
 });

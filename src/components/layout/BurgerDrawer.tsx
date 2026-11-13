@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   X,
   BookOpen,
   LayoutGrid,
+  Sparkles,
   Phone,
   MapPin,
   Clock,
@@ -71,6 +73,8 @@ export function BurgerDrawer({
   const lang = (i18n.language?.slice(0, 2) as Language) || 'hy';
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === 'dark';
+  const navigate = useNavigate();
+  const location = useLocation();
   const drawerRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -195,12 +199,20 @@ export function BurgerDrawer({
               type="button"
               onClick={() => {
                 onClose();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (location.pathname !== '/menu' && location.pathname !== '/') {
+                  navigate('/menu');
+                } else {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
               }}
               className={`flex w-full items-center gap-3.5 rounded-xl px-3.5 py-3 text-left text-sm font-medium transition-colors ${
-                isDark
-                  ? 'text-[#F8F1E9] hover:bg-[#3D261A]'
-                  : 'text-app-text hover:bg-app-surface-muted'
+                (location.pathname === '/menu' || location.pathname === '/')
+                  ? isDark
+                    ? 'bg-[#3D261A] text-[#C5A47A] font-semibold'
+                    : 'bg-app-surface-muted text-brand-primary font-semibold'
+                  : isDark
+                    ? 'text-[#F8F1E9] hover:bg-[#3D261A]'
+                    : 'text-app-text hover:bg-app-surface-muted'
               }`}
             >
               <BookOpen className="h-4 w-4 text-[#C5A47A]" />
@@ -211,7 +223,15 @@ export function BurgerDrawer({
               type="button"
               onClick={() => {
                 onClose();
-                onNavigateToCategories?.();
+                if (location.pathname !== '/menu' && location.pathname !== '/') {
+                  navigate('/menu');
+                  setTimeout(() => {
+                    const el = document.getElementById('menu-categories-nav');
+                    el?.scrollIntoView({ behavior: 'smooth' });
+                  }, 150);
+                } else {
+                  onNavigateToCategories?.();
+                }
               }}
               className={`flex w-full items-center gap-3.5 rounded-xl px-3.5 py-3 text-left text-sm font-medium transition-colors ${
                 isDark
@@ -221,6 +241,30 @@ export function BurgerDrawer({
             >
               <LayoutGrid className="h-4 w-4 text-[#C5A47A]" />
               <span>{t('nav.categories')}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                if (location.pathname !== '/about') {
+                  navigate('/about');
+                } else {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
+              className={`flex w-full items-center gap-3.5 rounded-xl px-3.5 py-3 text-left text-sm font-medium transition-colors ${
+                location.pathname === '/about'
+                  ? isDark
+                    ? 'bg-[#3D261A] text-[#C5A47A] font-semibold'
+                    : 'bg-app-surface-muted text-brand-primary font-semibold'
+                  : isDark
+                    ? 'text-[#F8F1E9] hover:bg-[#3D261A]'
+                    : 'text-app-text hover:bg-app-surface-muted'
+              }`}
+            >
+              <Sparkles className="h-4 w-4 text-[#C5A47A]" />
+              <span>{t('nav.about')}</span>
             </button>
 
             {/* Dark / Light Mode Switch Button */}

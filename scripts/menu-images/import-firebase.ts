@@ -215,7 +215,8 @@ async function checkStorageBucketAndListTenantObjects(token: string): Promise<{
 async function uploadWebpToStorage(
   optItem: OptimizedImageRecord,
   token: string,
-  existingObjects: Map<string, { size: number; downloadTokens?: string }>
+  existingObjects: Map<string, { size: number; downloadTokens?: string }>,
+  projectRoot = process.cwd()
 ): Promise<{ imagePath: string; imageUrl: string; skippedUpload: boolean }> {
   const objectPath = optItem.proposedStoragePath;
   if (!objectPath.startsWith(`restaurants/${TENANT_ID}/products/`)) {
@@ -251,7 +252,16 @@ async function uploadWebpToStorage(
     }
   }
 
-  const fileBuffer = fs.readFileSync(optItem.optimizedAbsolutePath);
+  const localOptimizedPath = fs.existsSync(optItem.optimizedAbsolutePath)
+    ? optItem.optimizedAbsolutePath
+    : path.join(
+        projectRoot,
+        'reports',
+        'xutorok-images',
+        'optimized',
+        optItem.optimizedFilename || path.basename(optItem.optimizedAbsolutePath.replace(/\\/g, '/'))
+      );
+  const fileBuffer = fs.readFileSync(localOptimizedPath);
   const downloadToken = crypto.randomUUID();
 
   // Upload via Google Cloud Storage / Firebase Storage v0 multipart or media upload with metadata
@@ -516,7 +526,8 @@ export async function runFirebaseImageImport(options?: {
             const uploaded = await uploadWebpToStorage(
               optItem,
               token,
-              storagePreflight.existingObjects
+              storagePreflight.existingObjects,
+              projectRoot
             );
             await updateFirestoreProductImageFields(
               entry.productId,

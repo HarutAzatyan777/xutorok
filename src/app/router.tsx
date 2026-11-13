@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from '../features/auth/components/ProtectedRoute';
 import { PublicMenuPage } from '../pages/public/PublicMenuPage';
+import { AboutUsPage } from '../pages/public/AboutUsPage';
 import { AdminLoginPage } from '../pages/admin/AdminLoginPage';
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage';
 import { AdminProductsPage } from '../pages/admin/AdminProductsPage';
@@ -35,6 +36,10 @@ export const appRouter = createBrowserRouter([
       {
         path: 'menu',
         element: <PublicMenuPage />,
+      },
+      {
+        path: 'about',
+        element: <AboutUsPage />,
       },
       ...devOnlyRoutes,
       {

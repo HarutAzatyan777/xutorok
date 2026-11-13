@@ -59,5 +59,42 @@ describe('Firestore & Storage Security Rules Static & Policy Verification', () =
     expect(importScriptSource).not.toMatch(/AIza[0-9A-Za-z_-]{35}/);
     expect(firebaseConfigSource).toContain('import.meta.env.VITE_FIREBASE_API_KEY');
   });
+
+  it('validates Firebase environment configuration and catches missing/placeholder variables', async () => {
+    const { validateFirebaseConfig } = await import('../../../config/firebase');
+
+    // Missing API key
+    const missingApiResult = validateFirebaseConfig({
+      VITE_FIREBASE_API_KEY: '',
+    });
+    expect(missingApiResult.isValid).toBe(false);
+    expect(missingApiResult.missingVariables).toContain('VITE_FIREBASE_API_KEY');
+
+    // Placeholder API key
+    const placeholderResult = validateFirebaseConfig({
+      VITE_FIREBASE_API_KEY: 'your_api_key_here',
+    });
+    expect(placeholderResult.isValid).toBe(false);
+    expect(placeholderResult.missingVariables).toContain('VITE_FIREBASE_API_KEY');
+
+    // Placeholder project and app ID
+    const placeholderProjectResult = validateFirebaseConfig({
+      VITE_FIREBASE_API_KEY: 'mock-valid-key',
+      VITE_FIREBASE_PROJECT_ID: 'your_project_id',
+      VITE_FIREBASE_APP_ID: 'your_app_id',
+    });
+    expect(placeholderProjectResult.isValid).toBe(false);
+    expect(placeholderProjectResult.missingVariables).toContain('VITE_FIREBASE_PROJECT_ID');
+    expect(placeholderProjectResult.missingVariables).toContain('VITE_FIREBASE_APP_ID');
+
+    // Valid configuration
+    const validResult = validateFirebaseConfig({
+      VITE_FIREBASE_API_KEY: 'valid-test-key',
+      VITE_FIREBASE_PROJECT_ID: 'ai-twin-conflicts',
+      VITE_FIREBASE_APP_ID: '1:562120240186:web:3204dac37761415337d903',
+    });
+    expect(validResult.isValid).toBe(true);
+    expect(validResult.missingVariables).toHaveLength(0);
+  });
 });
 
