@@ -87,20 +87,45 @@ describe('About Us Page & Restaurant Photography Integrity', () => {
     // Explicit Armenian check
     expect(hyLocales.about.pageTitle).toBe('Մեր մասին');
     expect(hyLocales.about.heroSubtitle).toBe('Ուկրաինական և Հայկական խոհանոց');
+    expect(hyLocales.about.storyP1).toBe(
+      '2019 թվականից Xutorok-ը միավորում է հայկական և ուկրաինական խոհանոցների հարուստ ավանդույթները։ Ավելին, քան պարզապես ռեստորան՝ Xutorok-ը մի վայր է, որտեղ ուկրաինական խոհանոցի ինքնատիպ համերը համադրվում են հայկական ջերմ հյուրընկալության հետ։ Այստեղ ներկայացված են ուկրաինական հայտնի ուտեստներ, ավանդական ըմպելիքներ և իսկական բաղադրատոմսեր։'
+    );
+    expect(hyLocales.about.storyP2).toBe(
+      'Ռեստորանում գործում է մինչև 40 անձի համար նախատեսված ընդհանուր սրահ, ինչպես նաև 10 հարմարավետ առանձնասենյակ, որոնք նախատեսված են մտերմիկ հանդիպումների, ընտանեկան առիթների և տոնական միջոցառումների կազմակերպման, ինչպես նաև սիրելիների հետ հաճելի ժամանակ անցկացնելու համար։'
+    );
     expect(hyLocales.about.viewMenuCta).toBe('Դիտել մենյուն');
     expect(hyLocales.nav.about).toBe('Մեր մասին');
 
     // Explicit Russian check
     expect(ruLocales.about.pageTitle).toBe('О нас');
     expect(ruLocales.about.heroSubtitle).toBe('Украинская и Армянская кухня');
+    expect(ruLocales.about.storyP1).toBe(
+      'С 2019 года Xutorok объединяет богатые кулинарные традиции армянской и украинской кухни. Xutorok — это больше, чем просто ресторан: здесь самобытные вкусы украинской кухни сочетаются с армянским теплом и гостеприимством. В меню представлены известные украинские блюда, традиционные напитки и аутентичные рецепты.'
+    );
+    expect(ruLocales.about.storyP2).toBe(
+      'В ресторане имеется общий зал вместимостью до 40 гостей, а также 10 комфортабельных отдельных комнат, предназначенных для дружеских встреч, семейных торжеств, праздничных мероприятий и приятного времяпрепровождения в кругу близких.'
+    );
     expect(ruLocales.about.viewMenuCta).toBe('Посмотреть меню');
     expect(ruLocales.nav.about).toBe('О нас');
 
     // Explicit English check
     expect(enLocales.about.pageTitle).toBe('About Us');
     expect(enLocales.about.heroSubtitle).toBe('Ukrainian & Armenian Cuisine');
+    expect(enLocales.about.storyP1).toBe(
+      'Since 2019, Xutorok has been bringing together the rich culinary traditions of Armenian and Ukrainian cuisine. More than just a restaurant, Xutorok is a place where the distinctive flavours of Ukrainian cuisine blend with Armenian warmth and hospitality. The menu features well-known Ukrainian dishes, traditional beverages, and authentic recipes.'
+    );
+    expect(enLocales.about.storyP2).toBe(
+      'The restaurant features a main dining hall accommodating up to 40 guests, along with 10 comfortable private rooms, designed for intimate gatherings, family occasions, festive celebrations, and enjoyable moments with loved ones.'
+    );
     expect(enLocales.about.viewMenuCta).toBe('View Menu');
     expect(enLocales.nav.about).toBe('About Us');
+
+    // Ensure no placeholder Lorem ipsum remains in any locale
+    for (const { code, data } of locales) {
+      for (const [key, value] of Object.entries(data.about)) {
+        expect(value.toLowerCase(), `Lorem ipsum found in ${code}.about.${key}`).not.toContain('lorem ipsum');
+      }
+    }
   });
 
   it('renders AboutUsPage with all expected sections, images, and CTA to static markup', () => {
