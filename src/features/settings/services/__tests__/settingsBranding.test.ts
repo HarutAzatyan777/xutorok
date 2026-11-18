@@ -171,7 +171,7 @@ describe('Restaurant Branding & Settings Single Source of Truth', () => {
     const profile = await fetchRestaurantProfile('xutorok');
     expect(mockGetDocs).toHaveBeenCalledTimes(1);
     expect(mockGetDoc).not.toHaveBeenCalled();
-    expect(profile.name).toEqual({ hy: 'Хуторок', ru: 'Хуторок', en: 'Хуторок' });
+    expect(profile.name).toEqual({ hy: 'Խուտոռոկ', ru: 'Хуторок', en: 'Xutorok' });
     expect(profile.branding?.logoUrl).toBe(
       'https://firebasestorage.googleapis.com/v0/b/ai-twin-conflicts.firebasestorage.app/o/logo.svg'
     );

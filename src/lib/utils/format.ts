@@ -16,6 +16,20 @@ export function formatAMD(amount: number): string {
   return `${amdFormatter.format(Math.round(amount))} ֏`;
 }
 
+const XUTOROK_LOCALIZED: LocalizedText = {
+  hy: 'Խուտոռոկ',
+  ru: 'Хуторок',
+  en: 'Xutorok',
+};
+
+const XUTOROK_SINGLE_SCRIPT_VARIANTS = new Set([
+  'хуторок',
+  'xutorok',
+  'khutorok',
+  'խուտոռոկ',
+  'խուտորոկ',
+]);
+
 /**
  * Resolves a localized text object to the requested language,
  * falling back to Armenian ('hy'), Russian ('ru'), then English ('en').
@@ -26,18 +40,32 @@ export function getLocalizedText(
   fallback = ''
 ): string {
   if (!text) return fallback;
-  if (typeof text === 'string') return text;
+  if (typeof text === 'string') {
+    const trimmed = text.trim();
+    if (XUTOROK_SINGLE_SCRIPT_VARIANTS.has(trimmed.toLowerCase())) {
+      return XUTOROK_LOCALIZED[lang] || trimmed;
+    }
+    return text;
+  }
+
+  const hy = text.hy?.trim() ?? '';
+  const ru = text.ru?.trim() ?? '';
+  const en = text.en?.trim() ?? '';
+  const nonEmpty = [hy, ru, en].filter(Boolean);
+
+  if (
+    nonEmpty.length > 0 &&
+    nonEmpty.every((v) => v.toLowerCase() === nonEmpty[0].toLowerCase()) &&
+    XUTOROK_SINGLE_SCRIPT_VARIANTS.has(nonEmpty[0].toLowerCase())
+  ) {
+    return XUTOROK_LOCALIZED[lang] || nonEmpty[0];
+  }
 
   const direct = text[lang]?.trim();
   if (direct) return direct;
 
-  const hy = text.hy?.trim();
   if (hy) return hy;
-
-  const ru = text.ru?.trim();
   if (ru) return ru;
-
-  const en = text.en?.trim();
   if (en) return en;
 
   return fallback;

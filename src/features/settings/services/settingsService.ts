@@ -130,11 +130,21 @@ export function assembleRestaurantProfile(
 
   const generalName = general?.name ? parseLocalizedMap(general.name) : null;
   const rootName = rootProfile?.name ? parseLocalizedMap(rootProfile.name) : null;
-  const name: LocalizedText = {
+  const rawName: LocalizedText = {
     hy: generalName?.hy || rootName?.hy || '',
     ru: generalName?.ru || rootName?.ru || '',
     en: generalName?.en || rootName?.en || '',
   };
+  const nonEmptyNames = [rawName.hy, rawName.ru, rawName.en].filter(Boolean);
+  const isUnlocalizedXutorok =
+    nonEmptyNames.length > 0 &&
+    nonEmptyNames.every((v) => v.toLowerCase() === nonEmptyNames[0].toLowerCase()) &&
+    ['хуторок', 'xutorok', 'khutorok', 'խուտոռոկ', 'խուտորոկ'].includes(
+      nonEmptyNames[0].toLowerCase()
+    );
+  const name: LocalizedText = isUnlocalizedXutorok
+    ? { hy: 'Խուտոռոկ', ru: 'Хуторок', en: 'Xutorok' }
+    : rawName;
 
   const supportedLanguages = general?.supportedLanguages
     ? parseSupportedLanguages(general.supportedLanguages)

@@ -86,7 +86,7 @@ describe('About Us Page & Restaurant Photography Integrity', () => {
 
     // Explicit Armenian check
     expect(hyLocales.about.pageTitle).toBe('Մեր մասին');
-    expect(hyLocales.about.heroSubtitle).toBe('Ուկրաինական և Հայկական խոհանոց');
+    expect(hyLocales.about.heroSubtitle).toBe('Ուկրաինական և Հայկական ռեստորան');
     expect(hyLocales.about.storyP1).toBe(
       '2019 թվականից Xutorok-ը միավորում է հայկական և ուկրաինական խոհանոցների հարուստ ավանդույթները։ Ավելին, քան պարզապես ռեստորան՝ Xutorok-ը մի վայր է, որտեղ ուկրաինական խոհանոցի ինքնատիպ համերը համադրվում են հայկական ջերմ հյուրընկալության հետ։ Այստեղ ներկայացված են ուկրաինական հայտնի ուտեստներ, ավանդական ըմպելիքներ և իսկական բաղադրատոմսեր։'
     );
@@ -98,7 +98,7 @@ describe('About Us Page & Restaurant Photography Integrity', () => {
 
     // Explicit Russian check
     expect(ruLocales.about.pageTitle).toBe('О нас');
-    expect(ruLocales.about.heroSubtitle).toBe('Украинская и Армянская кухня');
+    expect(ruLocales.about.heroSubtitle).toBe('Украинский и Армянский ресторан');
     expect(ruLocales.about.storyP1).toBe(
       'С 2019 года Xutorok объединяет богатые кулинарные традиции армянской и украинской кухни. Xutorok — это больше, чем просто ресторан: здесь самобытные вкусы украинской кухни сочетаются с армянским теплом и гостеприимством. В меню представлены известные украинские блюда, традиционные напитки и аутентичные рецепты.'
     );
@@ -110,7 +110,7 @@ describe('About Us Page & Restaurant Photography Integrity', () => {
 
     // Explicit English check
     expect(enLocales.about.pageTitle).toBe('About Us');
-    expect(enLocales.about.heroSubtitle).toBe('Ukrainian & Armenian Cuisine');
+    expect(enLocales.about.heroSubtitle).toBe('Ukrainian & Armenian Restaurant');
     expect(enLocales.about.storyP1).toBe(
       'Since 2019, Xutorok has been bringing together the rich culinary traditions of Armenian and Ukrainian cuisine. More than just a restaurant, Xutorok is a place where the distinctive flavours of Ukrainian cuisine blend with Armenian warmth and hospitality. The menu features well-known Ukrainian dishes, traditional beverages, and authentic recipes.'
     );
@@ -152,13 +152,6 @@ describe('About Us Page & Restaurant Photography Integrity', () => {
     expect(html).toContain('DIN_9667.jpg');
     expect(html).toContain('DIN_9709.jpg');
     expect(html).toContain('DIN_6196-2.jpg');
-
-    // Exterior Image
-    expect(html).toContain('IMG_0529.JPG');
-    expect(html).toContain('IMG_0529.webp');
-
-    // Menu CTA
-    expect(html).toContain('href="/menu"');
   });
 
   it('verifies that router source contains /about path and AboutUsPage binding', () => {

@@ -1,15 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  UtensilsCrossed,
   Sparkles,
-  Flame,
-  Wheat,
-  MapPin,
-  Phone,
-  Clock,
-  ArrowRight,
   Maximize2,
   X,
   ChevronLeft,
@@ -95,10 +87,9 @@ export function AboutUsPage() {
   const restaurantId = getRestaurantId();
   const { profile, status: settingsStatus, retry: retrySettings } = useRestaurantSettings(restaurantId);
 
-  const restaurantName = profile ? getLocalizedText(profile.name, lang) : '';
-  const address = profile?.contact?.address ? getLocalizedText(profile.contact.address, lang) : '';
-  const workingHours = profile?.contact?.workingHours ? getLocalizedText(profile.contact.workingHours, lang) : '';
-  const phone = profile?.contact?.phone?.trim() || '+37495108090';
+  const restaurantName =
+    (profile ? getLocalizedText(profile.name, lang) : '') ||
+    getLocalizedText({ hy: 'Խուտոռոկ', ru: 'Хуторок', en: 'Xutorok' }, lang);
 
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -339,93 +330,6 @@ export function AboutUsPage() {
                   <p>{t('about.cuisineP1')}</p>
                   <p>{t('about.cuisineP2')}</p>
                 </div>
-
-                {/* 3 Pillars / Feature Highlights */}
-                <div className="mt-8 space-y-3.5">
-                  <div
-                    className={`flex items-start gap-3.5 rounded-xl border p-3 sm:p-3.5 transition-colors ${
-                      isDark
-                        ? 'border-[#4A2C16] bg-[#3D261A]/60'
-                        : 'border-app-border bg-white/80'
-                    }`}
-                  >
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#C5A47A]/15 text-[#C5A47A]">
-                      <UtensilsCrossed className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h3
-                        className={`text-sm font-semibold ${
-                          isDark ? 'text-[#F8F1E9]' : 'text-[#241B17]'
-                        }`}
-                      >
-                        {t('about.cuisineFeature1')}
-                      </h3>
-                      <p
-                        className={`text-xs mt-0.5 ${
-                          isDark ? 'text-[#D8CBBF]' : 'text-[#82776D]'
-                        }`}
-                      >
-                        {t('about.cuisineFeature1Desc')}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div
-                    className={`flex items-start gap-3.5 rounded-xl border p-3 sm:p-3.5 transition-colors ${
-                      isDark
-                        ? 'border-[#4A2C16] bg-[#3D261A]/60'
-                        : 'border-app-border bg-white/80'
-                    }`}
-                  >
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#C5A47A]/15 text-[#C5A47A]">
-                      <Wheat className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h3
-                        className={`text-sm font-semibold ${
-                          isDark ? 'text-[#F8F1E9]' : 'text-[#241B17]'
-                        }`}
-                      >
-                        {t('about.cuisineFeature2')}
-                      </h3>
-                      <p
-                        className={`text-xs mt-0.5 ${
-                          isDark ? 'text-[#D8CBBF]' : 'text-[#82776D]'
-                        }`}
-                      >
-                        {t('about.cuisineFeature2Desc')}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div
-                    className={`flex items-start gap-3.5 rounded-xl border p-3 sm:p-3.5 transition-colors ${
-                      isDark
-                        ? 'border-[#4A2C16] bg-[#3D261A]/60'
-                        : 'border-app-border bg-white/80'
-                    }`}
-                  >
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#C5A47A]/15 text-[#C5A47A]">
-                      <Flame className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h3
-                        className={`text-sm font-semibold ${
-                          isDark ? 'text-[#F8F1E9]' : 'text-[#241B17]'
-                        }`}
-                      >
-                        {t('about.cuisineFeature3')}
-                      </h3>
-                      <p
-                        className={`text-xs mt-0.5 ${
-                          isDark ? 'text-[#D8CBBF]' : 'text-[#82776D]'
-                        }`}
-                      >
-                        {t('about.cuisineFeature3Desc')}
-                      </p>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -510,113 +414,6 @@ export function AboutUsPage() {
                   </button>
                 );
               })}
-            </div>
-          </div>
-        </section>
-
-        {/* ============================================================== */}
-        {/* 5. EXTERIOR / VISIT US SECTION                                 */}
-        {/* ============================================================== */}
-        <section
-          aria-labelledby="visit-heading"
-          className={`py-16 sm:py-24 border-t transition-colors duration-200 ${
-            isDark ? 'border-[#4A2C16] bg-[#271810]' : 'border-app-border/60 bg-[#F5EDE4]/70'
-          }`}
-        >
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <div className="overflow-hidden rounded-3xl border shadow-2xl transition-colors duration-200"
-              style={{
-                borderColor: isDark ? '#4A2C16' : '#EAE5DF',
-                backgroundColor: isDark ? '#302019' : '#FFFFFF',
-              }}
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-12">
-                {/* Exterior Photo (7 Columns) */}
-                <div className="lg:col-span-7">
-                  <div className="h-72 sm:h-96 lg:h-full min-h-[320px] w-full overflow-hidden">
-                    <ResponsivePhoto
-                      jpg="/aboute/IMG_0529.JPG"
-                      webp="/aboute/webp/IMG_0529.webp"
-                      alt={t('about.exteriorHeading')}
-                      className="w-full h-full"
-                      imgClassName="transition-transform duration-700 ease-out hover:scale-105"
-                    />
-                  </div>
-                </div>
-
-                {/* Visit Us Content (5 Columns) */}
-                <div className="lg:col-span-5 p-6 sm:p-10 flex flex-col justify-between">
-                  <div>
-                    <span className="inline-block text-xs font-bold tracking-widest text-[#C5A47A] uppercase mb-2">
-                      {t('about.exteriorBadge')}
-                    </span>
-                    <h2
-                      id="visit-heading"
-                      className={`font-serif text-2xl sm:text-3xl font-bold tracking-tight ${
-                        isDark ? 'text-[#F8F1E9]' : 'text-[#241B17]'
-                      }`}
-                    >
-                      {t('about.exteriorHeading')}
-                    </h2>
-
-                    <div className="my-4 h-0.5 w-12 bg-[#C5A47A]/70" />
-
-                    <p
-                      className={`text-sm sm:text-base leading-relaxed mb-6 ${
-                        isDark ? 'text-[#D8CBBF]' : 'text-[#575049]'
-                      }`}
-                    >
-                      {t('about.exteriorText')}
-                    </p>
-
-                    {/* Quick Contacts */}
-                    <div className="space-y-3 pt-2 text-xs sm:text-sm">
-                      {address && (
-                        <div className="flex items-start gap-2.5">
-                          <MapPin className="h-4 w-4 shrink-0 text-[#C5A47A] mt-0.5" />
-                          <span className={isDark ? 'text-[#D8CBBF]' : 'text-[#575049]'}>
-                            {address}
-                          </span>
-                        </div>
-                      )}
-
-                      {workingHours && (
-                        <div className="flex items-start gap-2.5">
-                          <Clock className="h-4 w-4 shrink-0 text-[#C5A47A] mt-0.5" />
-                          <span className={isDark ? 'text-[#D8CBBF]' : 'text-[#575049]'}>
-                            {workingHours}
-                          </span>
-                        </div>
-                      )}
-
-                      {phone && (
-                        <div className="flex items-center gap-2.5">
-                          <Phone className="h-4 w-4 shrink-0 text-[#C5A47A]" />
-                          <a
-                            href={`tel:${phone.replace(/\s+/g, '')}`}
-                            className={`font-semibold hover:underline ${
-                              isDark ? 'text-[#F8F1E9]' : 'text-[#241B17]'
-                            }`}
-                          >
-                            {phone}
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Primary CTA Button */}
-                  <div className="mt-8 pt-6 border-t border-inherit">
-                    <Link
-                      to="/menu"
-                      className="inline-flex w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl bg-[#C5A47A] px-7 py-3.5 text-sm sm:text-base font-bold text-[#241B17] shadow-lg transition-all duration-200 hover:bg-[#d6b78d] hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
-                    >
-                      <span>{t('about.viewMenuCta')}</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </section>

@@ -78,7 +78,9 @@ export function BurgerDrawer({
   const drawerRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-  const restaurantName = profile ? getLocalizedText(profile.name, lang) : '';
+  const restaurantName =
+    (profile ? getLocalizedText(profile.name, lang) : '') ||
+    getLocalizedText({ hy: 'Խուտոռոկ', ru: 'Хуторок', en: 'Xutorok' }, lang);
   const address = profile?.contact?.address
     ? getLocalizedText(profile.contact.address, lang)
     : '';
@@ -396,7 +398,7 @@ export function BurgerDrawer({
                         isDark ? 'text-[#D8CBBF]' : 'text-app-text-muted'
                       }`}
                     >
-                      Xutorok Tavern
+                      Xutorok Restaurant
                     </span>
                   </div>
                 </a>
