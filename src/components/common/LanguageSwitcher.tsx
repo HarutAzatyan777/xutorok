@@ -42,34 +42,40 @@ function FlagIcon({ lang }: { lang: Language }) {
     );
   }
 
-  // 🇬🇧 Flag of the United Kingdom (English)
+  // 🇺🇸 Flag of the United States (English)
   return (
     <svg
       aria-hidden="true"
       viewBox="0 0 22 16"
       className="h-4 w-[22px] shrink-0 rounded-[3px] shadow-2xs ring-1 ring-black/10"
     >
-      <rect width="22" height="16" fill="#012169" />
+      <rect width="22" height="16" fill="#B22234" />
       <path
-        d="M0,0 L22,16 M22,0 L0,16"
+        d="M0,1.85 H22 M0,4.31 H22 M0,6.77 H22 M0,9.23 H22 M0,11.69 H22 M0,14.15 H22"
         stroke="#FFFFFF"
-        strokeWidth="3.2"
+        strokeWidth="1.23"
       />
-      <path
-        d="M0,0 L22,16 M22,0 L0,16"
-        stroke="#C8102E"
-        strokeWidth="1.6"
-      />
-      <path
-        d="M11,0 V16 M0,8 H22"
-        stroke="#FFFFFF"
-        strokeWidth="5"
-      />
-      <path
-        d="M11,0 V16 M0,8 H22"
-        stroke="#C8102E"
-        strokeWidth="3"
-      />
+      <rect width="9.5" height="8.62" fill="#3C3B6E" />
+      <g fill="#FFFFFF">
+        <circle cx="1.6" cy="1.5" r="0.45" />
+        <circle cx="3.7" cy="1.5" r="0.45" />
+        <circle cx="5.8" cy="1.5" r="0.45" />
+        <circle cx="7.9" cy="1.5" r="0.45" />
+        <circle cx="2.65" cy="2.9" r="0.45" />
+        <circle cx="4.75" cy="2.9" r="0.45" />
+        <circle cx="6.85" cy="2.9" r="0.45" />
+        <circle cx="1.6" cy="4.3" r="0.45" />
+        <circle cx="3.7" cy="4.3" r="0.45" />
+        <circle cx="5.8" cy="4.3" r="0.45" />
+        <circle cx="7.9" cy="4.3" r="0.45" />
+        <circle cx="2.65" cy="5.7" r="0.45" />
+        <circle cx="4.75" cy="5.7" r="0.45" />
+        <circle cx="6.85" cy="5.7" r="0.45" />
+        <circle cx="1.6" cy="7.1" r="0.45" />
+        <circle cx="3.7" cy="7.1" r="0.45" />
+        <circle cx="5.8" cy="7.1" r="0.45" />
+        <circle cx="7.9" cy="7.1" r="0.45" />
+      </g>
     </svg>
   );
 }

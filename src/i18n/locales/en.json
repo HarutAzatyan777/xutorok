@@ -1,7 +1,7 @@
 {
   "menu": {
     "title": "Menu",
-    "subtitle": "Ukrainian and Armenian restaurant",
+    "subtitle": "Ukrainian and Armenian Restaurant",
     "allCategories": "All Items",
     "featured": "Featured",
     "searchPlaceholder": "Search dishes or drinks...",
@@ -51,7 +51,7 @@
   },
   "about": {
     "pageTitle": "About Us",
-    "heroSubtitle": "Ukrainian & Armenian Restaurant",
+    "heroSubtitle": "Ukrainian and Armenian Restaurant",
     "storyBadge": "Our Story",
     "storyHeading": "A Harmonious Blend of Tradition, Warmth & Authentic Flavors",
     "storyQuote": "More than just a restaurant, Xutorok is a place where the distinctive flavours of Ukrainian cuisine blend with Armenian warmth and hospitality.",

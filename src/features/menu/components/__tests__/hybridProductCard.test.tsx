@@ -420,15 +420,15 @@ describe('Hybrid Product Cards & Grid Redesign (Tasks 1–9)', () => {
     // Localized Menu heading & cuisine description in HY / RU / EN
     setAppLanguage('hy');
     expect(i18n.t('menu.title')).toBe('Մենյու');
-    expect(i18n.t('menu.subtitle')).toBe('Ուկրաինական և Հայկական ռեստորան');
+    expect(i18n.t('menu.subtitle')).toBe('Ուկրաինական և Հայկական-Ռեստորան');
 
     setAppLanguage('ru');
     expect(i18n.t('menu.title')).toBe('Меню');
-    expect(i18n.t('menu.subtitle')).toBe('Украинский и Армянский ресторан');
+    expect(i18n.t('menu.subtitle')).toBe('Украинский и армянский ресторан');
 
     setAppLanguage('en');
     expect(i18n.t('menu.title')).toBe('Menu');
-    expect(i18n.t('menu.subtitle')).toBe('Ukrainian and Armenian restaurant');
+    expect(i18n.t('menu.subtitle')).toBe('Ukrainian and Armenian Restaurant');
   });
 
   it('16. Renders burger navigation button and accessible drawer in public layout', () => {
@@ -592,6 +592,10 @@ describe('Hybrid Product Cards & Grid Redesign (Tasks 1–9)', () => {
     expect(html).toContain('aria-label="Հայերեն (Armenian)"');
     expect(html).toContain('aria-label="Русский (Russian)"');
     expect(html).toContain('aria-label="English"');
+    // US flag (🇺🇸) colors for English option, not UK flag
+    expect(html).toContain('#B22234');
+    expect(html).toContain('#3C3B6E');
+    expect(html).not.toContain('#012169');
 
     // Strip all HTML tags to verify zero visible text (no HY, RU, EN or language names)
     const visibleText = html.replace(/<[^>]+>/g, '').trim();
